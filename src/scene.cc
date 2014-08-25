@@ -14,7 +14,7 @@ Scene::Scene():
 
 Scene::~Scene() {
     if(objectBVH) {
-        objectBVH->releaseAll();
+        //objectBVH->releaseAll();
         delete objectBVH;
         objectBVH = NULL;
     }

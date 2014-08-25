@@ -15,8 +15,6 @@ namespace r1h {
 class Scene;
 class RenderCommandQueue;
 
-typedef 
-
 class Renderer {
 public:
 	struct Config {

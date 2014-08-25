@@ -1,13 +1,14 @@
 #ifndef R1H_BVHNODE_H
 #define R1H_BVHNODE_H
 
+#include "r1htypes.h"
 #include <vector>
-//#include "aabb.h"
+#include "aabb.h"
 
 namespace r1h {
 
-/*
-struct BVHNode {
+class BVHNode {
+public:
     BVHNode *children;
     int childNum;
     AABB aabb;
@@ -16,47 +17,23 @@ struct BVHNode {
         int dataId;
     };
     
-    BVHNode(): children(0), childNum(0) {}
-    ~BVHNode() {
-        if(children) {
-            delete [] children;
-        }
-    }
+    BVHNode();
+    ~BVHNode();
     
-    void allocChildren(const int chnum=2) {
-        if(chnum > childNum) {
-            delete [] children;
-        }
-        children = new BVHNode[chnum];
-        childNum = chnum;
-    }
-    
-    bool isLeaf() const {
-        return (children)? false : true;
-    }
-    
+    void allocChildren(const int chnum=2);
+    bool isLeaf() const;
     int buildAABBTree(AABB *aabbArray, const int aabbnum);
     
 private:
-    //
     struct AABBAxisComparator {
         int axisId;
-        AABBAxisComparator(const int a): axisId(a) {}
-        bool operator() (const AABB &aabb1, const AABB &aabb2) {
-            return aabb1.centroid.v[axisId] < aabb2.centroid.v[axisId];
-        }
+        AABBAxisComparator(const int a);
+        bool operator() (const AABB &aabb1, const AABB &aabb2);
     };
+	
     int recurseBuildTree(BVHNode &node, AABB *aabbArray, const int aabbnum, const int depth);
 };
-*/
 
-class BVHNode {
-public:
-    BVHNode() {}
-    ~BVHNode() {}
-    
-    void releaseAll() {}
-};
 
 }
 #endif
