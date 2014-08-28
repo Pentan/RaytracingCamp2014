@@ -111,7 +111,7 @@ void Renderer::workerJob(int workerId, Scene *scene) {
 }
 
 void Renderer::renderTile(Context *cntx, Scene *scene, FrameBuffer::Tile tile) {
-    printf("[0x%x] render tile (x(%d, %d),y(%d, %d))(size(%d, %d))\n", std::this_thread::get_id(), tile.startx, tile.endx, tile.starty, tile.endy, tile.endx - tile.startx, tile.endy - tile.starty);
+	printf("[0x%x] render tile (x(%d, %d),y(%d, %d))(size(%d, %d))\n", std::this_thread::get_id(), tile.startx, tile.endx, tile.starty, tile.endy, tile.endx - tile.startx, tile.endy - tile.starty);
     
     int ss = config.subSamples;
     R1hFPType ssrate = 1.0 / ss;

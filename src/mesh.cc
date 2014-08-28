@@ -1,4 +1,5 @@
 
+#include <iostream>
 #include <algorithm>
 #include "mesh.h"
 
@@ -45,7 +46,7 @@ Mesh::Mesh(const int vreserve, const int freserv): Geometry(), bvhRoot(0) {
 }
 
 Mesh::~Mesh() {
-	//printf("Sphere %p destructed\n", this);
+	printf("Mesh %p destructed\n", this);
 	if(bvhRoot) {
 		delete bvhRoot;
 	}
@@ -127,13 +128,13 @@ void Mesh::calcSmoothNormals() {
 void Mesh::buildBVH() {
     if(bvhRoot) {
         // rebuild?
-        //std::cout << "rebuild BVH ?" << std::endl;
+        std::cout << "rebuild BVH ?" << std::endl;
         delete bvhRoot;
         bvhRoot = 0;
     }
     
     size_t facenum = faces.size();
-    //std::cout  << "faces:" << facenum << std::endl;
+    std::cout  << "faces:" << facenum << std::endl;
     
     AABB *faceAABBs = new AABB[facenum];
     for(int i = 0; i < facenum; i++) {
@@ -148,7 +149,7 @@ void Mesh::buildBVH() {
     //int maxdepth = recurseBuildBVH(*bvhRoot, faceAABBs, facenum);
     size_t maxdepth = bvhRoot->buildAABBTree(faceAABBs, (int)facenum);
     
-    //std::cout << "max BVH depth:" << maxdepth << std::endl;
+    std::cout << "max BVH depth:" << maxdepth << std::endl;
     
     delete [] faceAABBs;
 }
@@ -279,7 +280,6 @@ bool Mesh::isIntersection(const Ray &ray, Intersection *intersect) const {
         normals[hitface.v1] * nearest_info.w1 +
         normals[hitface.v2] * nearest_info.w2;
     // TODO: attributes
-    //hitpoint->material = (hitface.matid < 0)? 0 : materials[hitface.matid];
     hitpoint->materialId = hitface.matid;
     hitpoint->faceId = nearest_info.faceid;
     hitpoint->varyingWeight = Vector3(nearest_info.w0, nearest_info.w1, nearest_info.w2);

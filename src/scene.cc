@@ -105,8 +105,8 @@ Color Scene::radiance(Renderer::Context *cntx, const Ray &ray) {
 			//+++++
 			// for debugging
             // normal
-            //radiancecol += hitpoint.normal * 0.5 + Vector3(0.5);
-            //continue;
+            radiancecol += hitpoint.normal * 0.5 + Vector3(0.5);
+            continue;
 			// color
 			//radiancecol += albedocol;
 			//continue;

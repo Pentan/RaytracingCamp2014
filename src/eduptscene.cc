@@ -2,6 +2,7 @@
 #include "eduptscene.h"
 #include "sphere.h"
 #include "sceneobject.h"
+#include "mesh.h"
 
 using namespace r1h;
 
@@ -20,12 +21,16 @@ EduptMaterial::EduptMaterial(const Color &col, const Color &emit, const Reflecti
 			bsdf = new RefractionBSDF();
 			break;
 		case BACKGROUND:
+			bsdf = nullptr;
 			break;
 	}
 }
 
 EduptMaterial::~EduptMaterial() {
-	delete bsdf;
+	printf("~EduptMaterial:%p\n", this);
+	if(bsdf) {
+		delete bsdf;
+	}
 }
 
 Color EduptMaterial::skyColor(const Ray &ray) const {
@@ -52,12 +57,12 @@ bool EduptScene::load(Scene *scene, double aspect) {
 		Color diffuse;
 		EduptMaterial::ReflectionType type;
 	} spheres[] = {
-		{1e5, Vector3( 1e5 + 1.0, 40.8, 81.6),    Color(), Color(0.75, 0.25, 0.25), EduptMaterial::DIFFUSE},
-		{1e5, Vector3(-1e5 + 99.0, 40.8, 81.6),   Color(), Color(0.25, 0.25, 0.75), EduptMaterial::DIFFUSE},
-		{1e5, Vector3(50.0, 40.8, 1e5),           Color(), Color(0.75, 0.75, 0.75), EduptMaterial::DIFFUSE},
-		{1e5, Vector3(50.0, 40.8, 1e5 + 250.0),   Color(), Color(0.0),                 EduptMaterial::DIFFUSE},
-		{1e5, Vector3(50.0, 1e5, 81.6),           Color(), Color(0.75, 0.75, 0.75), EduptMaterial::DIFFUSE},
-		{1e5, Vector3(50.0, 1e5 + 81.6, 81.6),    Color(), Color(0.75, 0.75, 0.75), EduptMaterial::DIFFUSE},
+//		{1e5, Vector3( 1e5 + 1.0, 40.8, 81.6),    Color(), Color(0.75, 0.25, 0.25), EduptMaterial::DIFFUSE},
+//		{1e5, Vector3(-1e5 + 99.0, 40.8, 81.6),   Color(), Color(0.25, 0.25, 0.75), EduptMaterial::DIFFUSE},
+//		{1e5, Vector3(50.0, 40.8, 1e5),           Color(), Color(0.75, 0.75, 0.75), EduptMaterial::DIFFUSE},
+//		{1e5, Vector3(50.0, 40.8, 1e5 + 250.0),   Color(), Color(0.0),                 EduptMaterial::DIFFUSE},
+//		{1e5, Vector3(50.0, 1e5, 81.6),           Color(), Color(0.75, 0.75, 0.75), EduptMaterial::DIFFUSE},
+//		{1e5, Vector3(50.0, 1e5 + 81.6, 81.6),    Color(), Color(0.75, 0.75, 0.75), EduptMaterial::DIFFUSE},
 		{20.0, Vector3(65.0, 20.0, 20.0),         Color(), Color(0.25, 0.75, 0.25), EduptMaterial::DIFFUSE},
 		{16.5, Vector3(27.0, 16.5, 47.0),         Color(), Color(0.99, 0.99, 0.99), EduptMaterial::SPECULAR},
 		{16.5, Vector3(77.0, 16.5, 78.0),         Color(), Color(0.99, 0.99, 0.99), EduptMaterial::REFRACTION},
@@ -80,6 +85,37 @@ bool EduptScene::load(Scene *scene, double aspect) {
 		
 		scene->addObject(SceneObjectRef(obj));
 	}
+	
+	/////
+	// triangle
+	{
+		SceneObjectRef objref(new SceneObject());
+		Mesh *mesh = new Mesh(3, 1);
+		
+		mesh->addVertexWithAttrs(Vector3(21.0, 38.0, 81.5), Vector3(0.0, 1.0, 0.0));
+		mesh->addVertexWithAttrs(Vector3(34.0, 16.0, 100.0), Vector3(0.0, 1.0, 0.0));
+		mesh->addVertexWithAttrs(Vector3(48.0, 33.5, 70.0), Vector3(0.0, 1.0, 0.0));
+		mesh->addVertexWithAttrs(Vector3(43.0, 5.5, 73.0), Vector3(0.0, 1.0, 0.0));
+		
+		mesh->addVertexWithAttrs(Vector3(11.0, 38.0, 81.5), Vector3(0.0, 1.0, 0.0));
+		mesh->addVertexWithAttrs(Vector3(24.0, 16.0, 100.0), Vector3(0.0, 1.0, 0.0));
+		mesh->addVertexWithAttrs(Vector3(38.0, 33.5, 70.0), Vector3(0.0, 1.0, 0.0));
+		mesh->addVertexWithAttrs(Vector3(33.0, 5.5, 73.0), Vector3(0.0, 1.0, 0.0));
+		
+		mesh->addFace(0, 1, 2);
+		mesh->addFace(3, 1, 2);
+		
+		mesh->addFace(4, 5, 6);
+		mesh->addFace(7, 5, 6);
+		
+		mesh->calcSmoothNormals();
+		mesh->buildBVH();
+		
+		objref->setGeometry(GeometryRef(mesh));
+		objref->addMaterial(MaterialRef(new EduptMaterial(Color(0.25, 0.75, 0.25), Color(), EduptMaterial::DIFFUSE)));
+		scene->addObject(objref);
+	}
+	/////
 	
 	EduptMaterial *bgmat = new EduptMaterial(Color(0.5), Color(0.5), EduptMaterial::BACKGROUND);
 	scene->setBackgroundMaterial(MaterialRef(bgmat));

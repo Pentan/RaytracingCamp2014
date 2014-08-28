@@ -16,7 +16,7 @@ void SceneObject::setGeometry(GeometryRef geom) {
 
 int SceneObject::addMaterial(MaterialRef matref) {
 	materials.push_back(matref);
-	return 0;
+	return (int)materials.size() - 1;
 }
 
 Material* SceneObject::getMaterialById(int matid) const {

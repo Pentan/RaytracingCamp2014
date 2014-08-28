@@ -8,6 +8,7 @@
 
 //
 #include "eduptscene.h"
+#include "scene2013.h"
 //
 
 #include <sys/time.h>
@@ -27,10 +28,10 @@ int main(int argc, char *argv[]) {
     Renderer *render = new Renderer();
     Renderer::Config renderConf = render->getConfig();
 	
-    renderConf.width = 1280 / 8;
-    renderConf.height = 720 / 8;
-	renderConf.samples = 128;
-	renderConf.subSamples = 2;
+    renderConf.width = 1280 / 4;
+    renderConf.height = 720 / 4;
+	renderConf.samples = 16;
+	renderConf.subSamples = 1;
 	
 	// parse render config from arguments?
 	
@@ -42,8 +43,12 @@ int main(int argc, char *argv[]) {
     Scene *scene = new Scene();
     scene->load();
 	
+	
+	//+++++ edupt cornel box scene +++++
+	//EduptScene::load(scene, (double)renderConf.width / renderConf.height);
 	//+++++
-	EduptScene::load(scene, (double)renderConf.width / renderConf.height);
+	//+++++ Render Camp 2013 scene +++++
+	setupMainScene2013(*scene);
 	//+++++
 	
     printf("scene loaded [%.4f sec]\n", gettimeofday_sec() - startTime);
