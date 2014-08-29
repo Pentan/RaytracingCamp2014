@@ -46,7 +46,6 @@ Mesh::Mesh(const int vreserve, const int freserv): Geometry(), bvhRoot(0) {
 }
 
 Mesh::~Mesh() {
-	printf("Mesh %p destructed\n", this);
 	if(bvhRoot) {
 		delete bvhRoot;
 	}
@@ -242,8 +241,6 @@ bool Mesh::intersectBVHNode(const BVHNode &node, const Ray &ray, TriangleHitInfo
 
 bool Mesh::isIntersection(const Ray &ray, Intersection *intersect) const {
     
-	Hitpoint *hitpoint = &intersect->hitpoint;
-	
 #if 0
     /////+++++
     // brute force now!
@@ -273,16 +270,16 @@ bool Mesh::isIntersection(const Ray &ray, Intersection *intersect) const {
     
     // calc face infomation
     const Face &hitface = faces[nearest_info.faceid];
-    hitpoint->distance = nearest_info.distance;
-    hitpoint->position = nearest_info.position;
-    hitpoint->normal =
+    intersect->distance = nearest_info.distance;
+    intersect->position = nearest_info.position;
+    intersect->normal =
         normals[hitface.v0] * nearest_info.w0 +
         normals[hitface.v1] * nearest_info.w1 +
         normals[hitface.v2] * nearest_info.w2;
     // TODO: attributes
-    hitpoint->materialId = hitface.matid;
-    hitpoint->faceId = nearest_info.faceid;
-    hitpoint->varyingWeight = Vector3(nearest_info.w0, nearest_info.w1, nearest_info.w2);
+    intersect->materialId = hitface.matid;
+    intersect->faceId = nearest_info.faceid;
+    intersect->varyingWeight = Vector3(nearest_info.w0, nearest_info.w1, nearest_info.w2);
     
     return true;
 }

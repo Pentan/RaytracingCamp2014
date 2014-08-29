@@ -18,9 +18,9 @@ public:
 	
 	virtual Color skyColor(const Ray &ray) const { return Color(0.0); }; // for background
     
-    virtual Color albedo(const SceneObject *obj, const Hitpoint &hp) const = 0;
-    virtual Color emission(const SceneObject *obj, const Hitpoint &hp) const = 0;
-    virtual void makeNextRays(const Ray &ray, const Hitpoint &hp, const int depth, Random *rnd, std::vector<Ray> *outvecs) const = 0;
+    virtual Color albedo(const SceneObject *obj, const Intersection &hp) const = 0;
+    virtual Color emission(const SceneObject *obj, const Intersection &hp) const = 0;
+    virtual void makeNextRays(const Ray &ray, const Intersection &hp, const int depth, Random *rnd, std::vector<Ray> *outvecs) const = 0;
 };
 
 typedef std::shared_ptr<Material> MaterialRef;

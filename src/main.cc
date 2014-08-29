@@ -28,10 +28,10 @@ int main(int argc, char *argv[]) {
     Renderer *render = new Renderer();
     Renderer::Config renderConf = render->getConfig();
 	
-    renderConf.width = 1280 / 4;
-    renderConf.height = 720 / 4;
-	renderConf.samples = 16;
-	renderConf.subSamples = 1;
+    renderConf.width = 1280 / 2;
+    renderConf.height = 720 / 2;
+	renderConf.samples = 32;
+	renderConf.subSamples = 2;
 	
 	// parse render config from arguments?
 	
@@ -52,7 +52,6 @@ int main(int argc, char *argv[]) {
 	//+++++
 	
     printf("scene loaded [%.4f sec]\n", gettimeofday_sec() - startTime);
-
 
     double renderStart = gettimeofday_sec();
 

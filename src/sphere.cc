@@ -22,7 +22,6 @@ AABB Sphere::getAABB() const {
 	return AABB(minv, maxv);
 }
 
-//bool Sphere::intersect(const Ray &ray, Hitpoint *hitpoint) const {
 bool Sphere::isIntersection(const Ray &ray, Intersection *intersect) const {
 	const Vector3 p_o = position - ray.origin;
 	const double b = Vector3::dot(p_o, ray.direction);
@@ -37,17 +36,15 @@ bool Sphere::isIntersection(const Ray &ray, Intersection *intersect) const {
 		return false;
 	}
 	
-	Hitpoint *hitpoint = &intersect->hitpoint;
-	
 	if(t1 > kEPS) {
-		hitpoint->distance = t1;
+		intersect->distance = t1;
 	} else {
-		hitpoint->distance = t2;
+		intersect->distance = t2;
 	}
 	
-	hitpoint->position = ray.origin + hitpoint->distance * ray.direction;
-	hitpoint->normal = Vector3::normalized(hitpoint->position - position);
-	hitpoint->materialId = 0;
+	intersect->position = ray.origin + intersect->distance * ray.direction;
+	intersect->normal = Vector3::normalized(intersect->position - position);
+	intersect->materialId = 0;
 	
 	return true;
 }

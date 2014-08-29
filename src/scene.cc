@@ -93,20 +93,19 @@ Color Scene::radiance(Renderer::Context *cntx, const Ray &ray) {
 			
 			// hit!
 			const SceneObject *hitobject = sceneObjects[intersect.objectId].get();
-			const Hitpoint &hitpoint = intersect.hitpoint;
 			
 			// from hit face info
-			const Material *hitmat = hitobject->getMaterialById(hitpoint.materialId);
-			const Color albedocol = hitmat->albedo(hitobject, hitpoint);
-            const Color emitcol = hitmat->emission(hitobject, hitpoint);
+			const Material *hitmat = hitobject->getMaterialById(intersect.materialId);
+			const Color albedocol = hitmat->albedo(hitobject, intersect);
+            const Color emitcol = hitmat->emission(hitobject, intersect);
             
             radiancecol += Color::mul(emitcol, traceray.weight);
             
 			//+++++
 			// for debugging
             // normal
-            radiancecol += hitpoint.normal * 0.5 + Vector3(0.5);
-            continue;
+            //radiancecol += intersect.normal * 0.5 + Vector3(0.5);
+            //continue;
 			// color
 			//radiancecol += albedocol;
 			//continue;
@@ -126,10 +125,10 @@ Color Scene::radiance(Renderer::Context *cntx, const Ray &ray) {
             const Color nextweight = albedocol * russianprob;
             
             tmprays->clear();
-            hitmat->makeNextRays(traceray, hitpoint, depth, crnd, tmprays);
+            hitmat->makeNextRays(traceray, intersect, depth, crnd, tmprays);
             for(int j = 0; j < (int)tmprays->size(); j++) {
                 Ray &nwray = tmprays->at(j);
-                nwray.smallOffset(hitpoint.normal);
+                nwray.smallOffset(intersect.normal);
                 nwray.weight = Color::mul(nwray.weight, Color::mul(traceray.weight, nextweight));
                 nextrays->push_back(nwray);
             }
@@ -150,8 +149,8 @@ bool Scene::intersectSceneObjects(const Ray &ray, Intersection *intersect) {
     for(int i = 0; i < (int)sceneObjects.size(); ++i) {
 		Intersection tmpinter;
         if(sceneObjects[i]->isIntersection(ray, &tmpinter)) {
-			if(tmpinter.hitpoint.distance < intersect->hitpoint.distance) {
-				intersect->hitpoint = tmpinter.hitpoint;
+			if(tmpinter.distance < intersect->distance) {
+				*intersect = tmpinter;
 				intersect->objectId = i;
 			}
         }

@@ -22,9 +22,12 @@ public:
 	
 	bool isIntersection(const Ray &ray, Intersection *intersect);
 	
+	int objectId;
+	
 private:
 	GeometryRef geometry;
 	std::vector<MaterialRef> materials;
+	
 	//Matrix4 transform;
 };
 

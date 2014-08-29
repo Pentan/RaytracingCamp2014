@@ -17,20 +17,26 @@ LDFLAGS = -lc++ $(EXTRAFLAGS)
 
 OBJS = \
     aabb.o \
+    aabbgeometry.o \
     abstracttonemapper.o \
     bsdfdiffuse.o \
-    bsdfspecular.o \
     bsdfrefraction.o \
+    bsdfspecular.o \
+    bvhnode.o \
     camera.o \
     commandqueue.o \
     eduptscene.o \
     framebuffer.o \
     intersection.o \
+    mesh.o \
     renderer.o \
     scene.o \
+    scene2013.o \
     sceneobject.o \
     sphere.o \
-    tonemapper.o
+    texture.o \
+    tonemapper.o \
+    wavefrontobj.o
 
 TESTOBJ = main.o
 MAINOBJ = main.o

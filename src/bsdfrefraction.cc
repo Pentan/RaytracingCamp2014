@@ -7,7 +7,7 @@ RefractionBSDF::~RefractionBSDF()
 {
 }
 
-void RefractionBSDF::makeNextRays(const Ray &ray, const Hitpoint &hp, const int depth, Random *rnd, std::vector<Ray> *outvecs) {
+void RefractionBSDF::makeNextRays(const Ray &ray, const Intersection &hp, const int depth, Random *rnd, std::vector<Ray> *outvecs) {
 	const Ray reflection_ray = Ray(hp.position, ray.direction - hp.normal * 2.0 * Vector3::dot(hp.normal, ray.direction));
 	const Vector3 orienting_normal = hp.orientingNormal(ray);
 	const bool into = Vector3::dot(hp.normal, orienting_normal) > 0.0;

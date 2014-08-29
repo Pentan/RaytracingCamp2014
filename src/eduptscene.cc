@@ -37,13 +37,13 @@ Color EduptMaterial::skyColor(const Ray &ray) const {
 	return color_;
 }
 
-Color EduptMaterial::albedo(const SceneObject *obj, const Hitpoint &hp) const {
+Color EduptMaterial::albedo(const SceneObject *obj, const Intersection &hp) const {
 	return color_;
 }
-Color EduptMaterial::emission(const SceneObject *obj, const Hitpoint &hp) const {
+Color EduptMaterial::emission(const SceneObject *obj, const Intersection &hp) const {
 	return emission_;
 }
-void EduptMaterial::makeNextRays(const Ray &ray, const Hitpoint &hp, const int depth, Random *rnd, std::vector<Ray> *outvecs) const {
+void EduptMaterial::makeNextRays(const Ray &ray, const Intersection &hp, const int depth, Random *rnd, std::vector<Ray> *outvecs) const {
 	bsdf->makeNextRays(ray, hp, depth, rnd, outvecs);
 }
 

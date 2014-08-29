@@ -10,7 +10,7 @@ public:
 	const double kIor = 1.5; // ior of REFLECTION_TYPE_REFRACTION
 
     ~RefractionBSDF();
-    void makeNextRays(const Ray &ray, const Hitpoint &hp, const int depth, Random *rnd, std::vector<Ray> *outvecs);
+    void makeNextRays(const Ray &ray, const Intersection &hp, const int depth, Random *rnd, std::vector<Ray> *outvecs);
 };
 
 }

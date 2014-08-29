@@ -13,7 +13,7 @@
 #include "bsdfdiffuse.h"
 #include "bsdfspecular.h"
 #include "aabbgeometry.h"
-#include "background.h"
+//#include "background.h"
 #include "texture.h"
 
 #include "scene2013.h"
@@ -36,13 +36,13 @@ public:
         delete voronoi;
     }
 	
-    Color albedo(const SceneObject *obj, const Hitpoint &hp) const {
+    Color albedo(const SceneObject *obj, const Intersection &hp) const {
         return Color(0.106, 0.106, 0.106) * 0.8;
     }
-    Color emission(const SceneObject *obj, const Hitpoint &hp) const {
+    Color emission(const SceneObject *obj, const Intersection &hp) const {
         return Color(0.0, 0.0, 0.0);
     }
-	void makeNextRays(const Ray &ray, const Hitpoint &hp, const int depth, Random *rnd, std::vector<Ray> *outvecs) const {
+	void makeNextRays(const Ray &ray, const Intersection &hp, const int depth, Random *rnd, std::vector<Ray> *outvecs) const {
         bsdf->makeNextRays(ray, hp, depth, rnd, outvecs);
     }
 };
@@ -59,13 +59,13 @@ public:
         delete bsdf;
     }
     
-    Color albedo(const SceneObject *obj, const Hitpoint &hp) const {
+    Color albedo(const SceneObject *obj, const Intersection &hp) const {
         return Color(0.68);
     }
-    Color emission(const SceneObject *obj, const Hitpoint &hp) const {
+    Color emission(const SceneObject *obj, const Intersection &hp) const {
         return Color(0.0, 0.0, 0.0);
     }
-    void makeNextRays(const Ray &ray, const Hitpoint &hp, const int depth, Random *rnd, std::vector<Ray> *outvecs) const {
+    void makeNextRays(const Ray &ray, const Intersection &hp, const int depth, Random *rnd, std::vector<Ray> *outvecs) const {
         bsdf->makeNextRays(ray, hp, depth, rnd, outvecs);
     }
 };
@@ -82,13 +82,13 @@ public:
         delete bsdf;
     }
     
-    Color albedo(const SceneObject *obj, const Hitpoint &hp) const {
+    Color albedo(const SceneObject *obj, const Intersection &hp) const {
         return Color(0.128783, 0.610820, 0.640000);
     }
-    Color emission(const SceneObject *obj, const Hitpoint &hp) const {
+    Color emission(const SceneObject *obj, const Intersection &hp) const {
         return Color(0.128783, 0.610820, 0.640000) * 2.0;
     }
-    void makeNextRays(const Ray &ray, const Hitpoint &hp, const int depth, Random *rnd, std::vector<Ray> *outvecs) const {
+    void makeNextRays(const Ray &ray, const Intersection &hp, const int depth, Random *rnd, std::vector<Ray> *outvecs) const {
         bsdf->makeNextRays(ray, hp, depth, rnd, outvecs);
     }
 };
@@ -105,13 +105,13 @@ public:
         delete bsdf;
     }
     
-    Color albedo(const SceneObject *obj, const Hitpoint &hp) const {
+    Color albedo(const SceneObject *obj, const Intersection &hp) const {
         return Color(0.219066, 0.219066, 0.219066) * 0.7;
     }
-    Color emission(const SceneObject *obj, const Hitpoint &hp) const {
+    Color emission(const SceneObject *obj, const Intersection &hp) const {
         return Color(0.0, 0.0, 0.0);
     }
-    void makeNextRays(const Ray &ray, const Hitpoint &hp, const int depth, Random *rnd, std::vector<Ray> *outvecs) const {
+    void makeNextRays(const Ray &ray, const Intersection &hp, const int depth, Random *rnd, std::vector<Ray> *outvecs) const {
         bsdf->makeNextRays(ray, hp, depth, rnd, outvecs);
     }
 };
@@ -135,16 +135,16 @@ public:
         delete voronoi;
     }
     
-    Color albedo(const SceneObject *obj, const Hitpoint &hp) const {
+    Color albedo(const SceneObject *obj, const Intersection &hp) const {
         Color voro = voronoi->sample(hp.position);
         return Color::lerp(Color(0.26, 0.3, 0.28), Color(0.68, 0.7, 0.65), pow(voro.r, 4.0));
         //return Color(0.1, 0.3, 0.0);
     }
-    Color emission(const SceneObject *obj, const Hitpoint &hp) const {
+    Color emission(const SceneObject *obj, const Intersection &hp) const {
         //Color voro = voronoi->sample(hp.position);
         return Color(0.0, 0.0, 0.0);
     }
-    void makeNextRays(const Ray &ray, const Hitpoint &hp, const int depth, Random *rnd, std::vector<Ray> *outvecs) const {
+    void makeNextRays(const Ray &ray, const Intersection &hp, const int depth, Random *rnd, std::vector<Ray> *outvecs) const {
         Color voro = voronoi->sample(hp.position);
         if(voro.r > 0.5) {
             diffuseBsdf->makeNextRays(ray, hp, depth, rnd, outvecs);
@@ -169,15 +169,15 @@ public:
         delete fnoise;
     }
     
-    Color albedo(const SceneObject *obj, const Hitpoint &hp) const {
+    Color albedo(const SceneObject *obj, const Intersection &hp) const {
         Color noise = fnoise->sample(hp.position);
         return noise.r * Vector3(0.55, 0.55, 0.4);
     }
-    Color emission(const SceneObject *obj, const Hitpoint &hp) const {
+    Color emission(const SceneObject *obj, const Intersection &hp) const {
         //Color noise = fnoise->sample(hp.position_);
         return Vector3(0.0);
     }
-    void makeNextRays(const Ray &ray, const Hitpoint &hp, const int depth, Random *rnd, std::vector<Ray> *outvecs) const {
+    void makeNextRays(const Ray &ray, const Intersection &hp, const int depth, Random *rnd, std::vector<Ray> *outvecs) const {
         bsdf->makeNextRays(ray, hp, depth, rnd, outvecs);
     }
 };
@@ -278,14 +278,21 @@ public:
 using namespace r1h;
 
 // bg
-class GradientBg : public BackgroundMaterial {
+class GradientBg : public Material {
 public:
+	GradientBg() {}
+	~GradientBg() {}
+	
     Color skyColor(const Ray &ray) const {
         Vector3 upv = Vector3::normalized(Vector3(0.0, 2.0, -0.5));
         Color sun = Color(10.0) * pow(fabs(Vector3::dot(ray.direction, upv)), 8.0);
         Color grad = Color::lerp(Color(1.0, 0.5, 0.6), Color(0.6, 2.0, 2.0), fabs(ray.direction.y));
-        return (sun + grad * 1.0);
+        return (sun + grad * 0.2);
     }
+	
+	Color albedo(const SceneObject *obj, const Intersection &hp) const { return Vector3(0.0); };
+    Color emission(const SceneObject *obj, const Intersection &hp)  const { return Vector3(1.0); };
+    void makeNextRays(const Ray &ray, const Intersection &hp, const int depth, Random *rnd, std::vector<Ray> *outvecs) const {};
 };
 
 //
@@ -293,7 +300,7 @@ static void setupRobot(Scene &scene) {
     
     //----- robo
     MainModelLoader sceneloader("mainscene.obj");
-    sceneloader.setBasePath("../bin/model");
+    sceneloader.setBasePath("./model2013");
     
 	
     // create object
@@ -303,11 +310,11 @@ static void setupRobot(Scene &scene) {
     MaterialRef matref;
     // materials
     matref = MaterialRef(new AccentGrayMaterial());
-    sceneloader.materialMap[std::string("AccentGray")] = obj->addMaterial(matref);
-    
+	sceneloader.materialMap[std::string("AccentGray")] = obj->addMaterial(matref);
+	
     matref = MaterialRef(new BodyWhiteMaterial());
-    sceneloader.materialMap[std::string("BodyWhite")] = obj->addMaterial(matref);
-    
+	sceneloader.materialMap[std::string("BodyWhite")] = obj->addMaterial(matref);
+	
     matref = MaterialRef(new EyeColorMaterial());
     sceneloader.materialMap[std::string("EyeColor")] = obj->addMaterial(matref);
     
@@ -331,10 +338,11 @@ static void setupBGObjs(Scene &scene) {
     
     const char *objfiles[] = { "mainfloor.obj", "mainfront.obj", "mainright.obj", "mainleft.obj" };
     
-	// create object
-	obj = new SceneObject();
-    
     for(int i = 0; i < 4; i++) {
+		// create object
+		obj = new SceneObject();
+		obj->objectId = i;
+		
         MainModelLoader sceneloader(objfiles[i]);
         sceneloader.setBasePath("./model2013");
         sceneloader.load();
@@ -345,7 +353,7 @@ static void setupBGObjs(Scene &scene) {
         } else {
             mat = new WallMaterial();
         }
-        obj->addMaterial(MaterialRef(mat));
+		obj->addMaterial(MaterialRef(mat));
         
         sceneloader.getMesh()->calcSmoothNormals();
         sceneloader.getMesh()->buildBVH();

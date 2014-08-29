@@ -13,7 +13,7 @@ namespace r1h {
 class BSDF {
 public:
     virtual ~BSDF() {}
-    virtual void makeNextRays(const Ray &ray, const Hitpoint &hp, const int depth, Random *rnd, std::vector<Ray> *outvecs) = 0;
+    virtual void makeNextRays(const Ray &ray, const Intersection &hp, const int depth, Random *rnd, std::vector<Ray> *outvecs) = 0;
 };
 
 }

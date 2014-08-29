@@ -16,23 +16,21 @@ bool AABBGeometry::isIntersection(const Ray &ray, Intersection *intersect) const
 	double t;
 	int axis;
 	
-	Hitpoint *hitpoint = &intersect->hitpoint;
-	
 	if(aabb.isIntersect(ray, &t, &axis)) {
-		hitpoint->distance = t;
-		hitpoint->position = ray.origin + ray.direction * t;
-		hitpoint->materialId = 0;
+		intersect->distance = t;
+		intersect->position = ray.origin + ray.direction * t;
+		intersect->materialId = 0;
 		
 		double d = (ray.direction.v[axis] > 0.0)? -1.0 : 1.0;
 		switch(axis) {
 			case 0:
-				hitpoint->normal = Vector3(d, 0.0, 0.0);
+				intersect->normal = Vector3(d, 0.0, 0.0);
 				break;
 			case 1:
-				hitpoint->normal = Vector3(0.0, d, 0.0);
+				intersect->normal = Vector3(0.0, d, 0.0);
 				break;
 			case 2:
-				hitpoint->normal = Vector3(0.0, 0.0, d);
+				intersect->normal = Vector3(0.0, 0.0, d);
 				break;
 		}
 		

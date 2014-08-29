@@ -8,7 +8,7 @@ namespace r1h {
 class DiffuseBSDF : public BSDF {
 public:
     ~DiffuseBSDF();
-    void makeNextRays(const Ray &ray, const Hitpoint &hp, const int depth, Random *rnd, std::vector<Ray> *outvecs);
+    void makeNextRays(const Ray &ray, const Intersection &hp, const int depth, Random *rnd, std::vector<Ray> *outvecs);
 };
 
 }

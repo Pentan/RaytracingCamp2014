@@ -24,9 +24,9 @@ public:
     ~EduptMaterial();
     
 	Color skyColor(const Ray &ray) const;
-    Color albedo(const SceneObject *obj, const Hitpoint &hp) const;
-    Color emission(const SceneObject *obj, const Hitpoint &hp) const;
-    void makeNextRays(const Ray &ray, const Hitpoint &hp, const int depth, Random *rnd, std::vector<Ray> *outvecs) const;
+    Color albedo(const SceneObject *obj, const Intersection &hp) const;
+    Color emission(const SceneObject *obj, const Intersection &hp) const;
+    void makeNextRays(const Ray &ray, const Intersection &hp, const int depth, Random *rnd, std::vector<Ray> *outvecs) const;
 	
 private:
     Color color_;

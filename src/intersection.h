@@ -8,43 +8,37 @@
 
 namespace r1h {
 
-class Hitpoint {
+	class Intersection {
 public:
+    enum {
+        kNoIntersected = -1
+    };
+    
     R1hFPType distance;
     Vector3 normal;
     Vector3 position;
     
     int materialId;
     int faceId;
-    Vector3 varyingWeight;
+    int objectId;
+	
+	Vector3 varyingWeight;
     
 	/*
-    struct {
-        Vector3 position;
-        Vector3 normal;
-        Vector3 tangent;
-    } world, local;
-    */
+	 struct {
+	 Vector3 position;
+	 Vector3 normal;
+	 Vector3 tangent;
+	 } world, local;
+	 */
 	
     std::vector<Vector3> attributes;
     
     //Material *material;
     
-    Hitpoint() : distance(kINF), normal(), position() {}
-    Vector3 orientingNormal(const Ray &ray) const;
-};
-
-class Intersection {
-public:
-    enum {
-        kNoIntersected = -1
-    };
-    
-    Hitpoint hitpoint;
-    int objectId;
-    
-    Intersection() : objectId(kNoIntersected) {}
+    Intersection();
     void clear();
+	Vector3 orientingNormal(const Ray &ray) const;
 };
 
 }
