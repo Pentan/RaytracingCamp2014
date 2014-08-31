@@ -22,7 +22,7 @@ public:
     ~Sphere();
     
     AABB getAABB() const;
-	bool isIntersection(const Ray &ray, Intersection *intersect) const;
+	bool isIntersect(const Ray &ray, Intersection *intersect) const;
 };
 
 }

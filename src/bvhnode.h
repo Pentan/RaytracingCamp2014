@@ -24,6 +24,22 @@ public:
     bool isLeaf() const;
     int buildAABBTree(AABB *aabbArray, const int aabbnum);
     
+public:
+	/*
+	struct TraverseInfo {
+		R1hFPType distance;
+	};
+	
+	class TraverseResult {
+	public:
+		bool intersected;
+		TraverseResult();
+	};
+	
+	typedef bool (*LeafNodeCallback)(Ray&, TraverseResult*);
+	
+	static TraverseResult isIntersect(Ray &ray, BVHNode &node, TraverseInfo *trvinfo, LeafNodeCallback leadcallback);
+	*/
 private:
     struct AABBAxisComparator {
         int axisId;

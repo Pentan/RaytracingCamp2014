@@ -18,7 +18,7 @@ public:
     AABBGeometry(const Vector3 min, const Vector3 max);
     AABB getAABB() const;
     
-    bool isIntersection(const Ray &ray, Intersection *intersect) const;
+    bool isIntersect(const Ray &ray, Intersection *intersect) const;
 };
 
 }

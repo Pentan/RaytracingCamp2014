@@ -24,7 +24,10 @@ public:
     virtual ~Geometry() {};
     
     virtual AABB getAABB() const = 0;
-    virtual bool isIntersection(const Ray &ray, Intersection *intersect) const = 0;
+    virtual bool isIntersect(const Ray &ray, Intersection *intersect) const = 0;
+	
+	// optional. ex.:build VBH for mesh
+	virtual void prepareRendering() {}
 };
 
 typedef std::shared_ptr<Geometry> GeometryRef;

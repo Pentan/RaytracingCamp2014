@@ -22,7 +22,7 @@ AABB Sphere::getAABB() const {
 	return AABB(minv, maxv);
 }
 
-bool Sphere::isIntersection(const Ray &ray, Intersection *intersect) const {
+bool Sphere::isIntersect(const Ray &ray, Intersection *intersect) const {
 	const Vector3 p_o = position - ray.origin;
 	const double b = Vector3::dot(p_o, ray.direction);
 	const double D4 = b * b - Vector3::dot(p_o, p_o) + radius * radius;

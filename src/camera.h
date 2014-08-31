@@ -18,6 +18,8 @@ public:
     void setFocal(const R1hFPType focalmm, const R1hFPType sensorwidth=36.0);
     void setFieldOfView(const R1hFPType vdegree);
     
+	R1hFPType getAspectRatio() const;
+	
     /// expects(-1,1)
     Ray getRay(const double tx, const double ty) const;
     

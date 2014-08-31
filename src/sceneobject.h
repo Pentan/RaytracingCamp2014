@@ -6,6 +6,7 @@
 #include "material.h"
 #include "geometry.h"
 #include "intersection.h"
+#include "aabb.h"
 
 namespace r1h {
 
@@ -16,13 +17,19 @@ public:
 	virtual ~SceneObject();
 	
 	void setGeometry(GeometryRef geom);
-	int addMaterial(MaterialRef matref);
+	Geometry* getGeometry();
 	
+	int addMaterial(MaterialRef matref);
 	Material* getMaterialById(int matid) const;
 	
-	bool isIntersection(const Ray &ray, Intersection *intersect);
+	AABB getAABB() const;
 	
-	int objectId;
+	void prepareRendering();
+	
+	bool isIntersect(const Ray &ray, Intersection *intersect);
+	
+	//+++++
+	//int objectId;
 	
 private:
 	GeometryRef geometry;

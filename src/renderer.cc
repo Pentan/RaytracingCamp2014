@@ -1,7 +1,8 @@
-#include "renderer.h"
+#include <iostream>
 #include <chrono>
 #include <random>
 
+#include "renderer.h"
 #include "scene.h"
 #include "framebuffer.h"
 #include "commandqueue.h"
@@ -35,6 +36,9 @@ void Renderer::render(Scene *scene) {
     int w = frameBuffer->getWidth();
     int h = frameBuffer->getHeight();
     
+	// scene
+	scene->prepareRendering();
+	
     // queue
     renderQueue = new RenderCommandQueue();
     // push tile command
@@ -111,7 +115,8 @@ void Renderer::workerJob(int workerId, Scene *scene) {
 }
 
 void Renderer::renderTile(Context *cntx, Scene *scene, FrameBuffer::Tile tile) {
-	printf("[0x%x] render tile (x(%d, %d),y(%d, %d))(size(%d, %d))\n", std::this_thread::get_id(), tile.startx, tile.endx, tile.starty, tile.endy, tile.endx - tile.startx, tile.endy - tile.starty);
+	std::cout << "[" << std::this_thread::get_id() << "]";
+	printf("render tile (x(%d, %d),y(%d, %d))(size(%d, %d))\n", tile.startx, tile.endx, tile.starty, tile.endy, tile.endx - tile.startx, tile.endy - tile.starty);
     
     int ss = config.subSamples;
     R1hFPType ssrate = 1.0 / ss;

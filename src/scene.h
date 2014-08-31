@@ -18,18 +18,23 @@ class BVHNode;
 class Scene {
 public:
     Scene();
-    virtual ~Scene();
+    ~Scene();
     
     // setup
-    virtual bool load();
+    bool load();
+	bool loadWavefrontObj(std::string filename);
 	
     int addObject(SceneObjectRef objref);
-    
+    SceneObject* getObject(int objid);
+	int getObjectsCount() const;
+	
     Camera* getCamera();
 	void setCamera(CameraRef camref);
     
 	Material* getBackgroundMaterial();
 	void setBackgroundMaterial(MaterialRef matref);
+	
+	void prepareRendering();
 	
 	// render
     Color radiance(Renderer::Context *cntx, const Ray &ray);

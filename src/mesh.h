@@ -37,7 +37,7 @@ public:
     
     struct AttrCoord {
         int attrid;         // index of Geometry's attributes
-        int co1, co2, co3;
+        int co0, co1, co2;
     };
     
     struct Face {
@@ -49,9 +49,9 @@ public:
         Face();
         Face(const int a, const int b, const int c, const int m);
         
-        inline void setV(const int a, const int b, const int c);
-        inline void setN(const int a, const int b, const int c);
-        inline void addAttr(const int attrid, const int a, const int b, const int c);
+        void setV(const int a, const int b, const int c);
+        void setN(const int a, const int b, const int c);
+        void addAttr(const int attrid, const int a, const int b, const int c);
     };
     
 public:
@@ -61,13 +61,19 @@ public:
     
     size_t addVertexWithAttrs(const Vector3 &p, const Vector3 &n, const Vector3 &uv=0, const int uvid=-1);
     size_t addVertex(const Vector3 &v);
-    size_t addNormal(const Vector3 &v);
-    size_t newAttributeContainer();
+    size_t getVertexCount() const;
+	
+	size_t addNormal(const Vector3 &v);
+    size_t getNormalCount() const;
+    
+	size_t newAttributeContainer();
     size_t addAttribute(const int attrid, const Vector3 &v);
+	size_t getAttributeCount(const int attrid) const;
     
     size_t addFace(const Mesh::Face &f);
     size_t addFace(const int a, const int b, const int c, const int matid=0);
-    
+    size_t getFaceCount() const;
+	
     Vector3 getVaryingAttr(const int faceid, const int attrid, const Vector3 weights);
     
     /////
@@ -84,9 +90,14 @@ public:
     
     bool triangleIntersect(const int faceid, const Ray &ray, TriangleHitInfo *hitinfo) const;
 	
+	// override
 	virtual AABB getAABB() const;
-    virtual bool isIntersection(const Ray &ray, Intersection *intersect) const;
-    
+    virtual bool isIntersect(const Ray &ray, Intersection *intersect) const;
+    virtual void prepareRendering();
+	
+	/// for debug
+	void dumpFaces() const;
+	
 private:
 	std::vector<Vector3> vertices;
     std::vector<Vector3> normals;

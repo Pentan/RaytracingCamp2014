@@ -33,6 +33,10 @@ void Camera::setFieldOfView(const R1hFPType vdegree) {
     screenLeft = tan(vdegree * M_PI / 180.0 * 0.5) * 2.0;
 }
 
+R1hFPType Camera::getAspectRatio() const {
+	return aspect;
+}
+
 Ray Camera::getRay(const double tx, const double ty) const {
     Vector3 left = side * (screenLeft * tx * 0.5);
     Vector3 top = up * (screenLeft / aspect * ty * 0.5);

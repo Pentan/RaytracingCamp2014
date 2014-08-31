@@ -268,7 +268,7 @@ public:
     }
     
     // endof .mtl or .obj
-    virtual void endFile() {
+    virtual void endFile(std::string fullpath) {
         //std::cout << "obj end" << std::endl;
     }
 };
@@ -300,7 +300,7 @@ static void setupRobot(Scene &scene) {
     
     //----- robo
     MainModelLoader sceneloader("mainscene.obj");
-    sceneloader.setBasePath("./model2013");
+    sceneloader.setBasePath("./models/2013");
     
 	
     // create object
@@ -334,17 +334,16 @@ static void setupRobot(Scene &scene) {
 }
 
 static void setupBGObjs(Scene &scene) {
-    SceneObject *obj;
     
     const char *objfiles[] = { "mainfloor.obj", "mainfront.obj", "mainright.obj", "mainleft.obj" };
     
     for(int i = 0; i < 4; i++) {
 		// create object
-		obj = new SceneObject();
-		obj->objectId = i;
+		SceneObjectRef objref;
+		objref = SceneObjectRef(new SceneObject());
 		
         MainModelLoader sceneloader(objfiles[i]);
-        sceneloader.setBasePath("./model2013");
+        sceneloader.setBasePath("./models/2013");
         sceneloader.load();
         
         Material *mat;
@@ -353,14 +352,14 @@ static void setupBGObjs(Scene &scene) {
         } else {
             mat = new WallMaterial();
         }
-		obj->addMaterial(MaterialRef(mat));
+		objref->addMaterial(MaterialRef(mat));
         
         sceneloader.getMesh()->calcSmoothNormals();
         sceneloader.getMesh()->buildBVH();
         
         // create object
-        obj->setGeometry(sceneloader.meshref);
-        scene.addObject(SceneObjectRef(obj));
+        objref->setGeometry(sceneloader.meshref);
+        scene.addObject(objref);
     }
 }
 
@@ -384,4 +383,54 @@ void r1h::setupMainScene2013(Scene &scene) {
         Vector3(0.0, 1.0, 0.0)
     );
     scene.getCamera()->setFocal(65.0, 32.0);
+}
+
+//
+void r1h::setupTestCubeScene(Scene &scene) {
+    
+    // objs
+    {
+		// create object
+		SceneObjectRef objref;
+		objref = SceneObjectRef(new SceneObject());
+		
+        MainModelLoader sceneloader("untitled.obj");
+        sceneloader.setBasePath("./models/");
+        sceneloader.load();
+        
+        Material *mat;
+        mat = new FloorMaterial();
+		objref->addMaterial(MaterialRef(mat));
+        
+        sceneloader.getMesh()->calcSmoothNormals();
+        sceneloader.getMesh()->buildBVH();
+        
+        // create object
+        objref->setGeometry(sceneloader.meshref);
+        scene.addObject(objref);
+	}
+	
+    //----- background
+    GradientBg *bgmat = new GradientBg();
+    scene.setBackgroundMaterial(MaterialRef(bgmat));
+    
+    //----- camera
+	/*
+    scene.setCamera(CameraRef(new Camera()));
+    scene.getCamera()->setLookat(
+								 Vector3(0.0, 0.0, 10.0),
+								 Vector3(0.0, 0.0, 0.0),
+								 Vector3(0.0, 1.0, 0.0)
+								 );
+    scene.getCamera()->setFocal(65.0, 32.0);
+	 */
+	
+	Camera *camera = scene.getCamera();
+	camera->setFieldOfView(60.0);
+	camera->setAspectRatio(16.0 / 9.0);
+	scene.getCamera()->setLookat(
+								 Vector3(0.0, 0.0, 10.0),
+								 Vector3(0.0, 0.0, 0.0),
+								 Vector3(0.0, 1.0, 0.0)
+								 );
 }

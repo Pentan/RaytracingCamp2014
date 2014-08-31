@@ -51,7 +51,7 @@ case MTL_illum:
         break;
 */
 
-WavefrontObj::WavefrontObj(const char *path): filepath(path) {
+WavefrontObj::WavefrontObj(std::string path) {
     ptMap["v"] =        ParameterDesc(OBJ_v,  kVectorValue);
     ptMap["vn"] =       ParameterDesc(OBJ_vn, kVectorValue);
     ptMap["vt"] =       ParameterDesc(OBJ_vt, kVectorValue);
@@ -73,37 +73,59 @@ WavefrontObj::WavefrontObj(const char *path): filepath(path) {
     ptMap["f"] =        ParameterDesc(OBJ_f, kFaceValue);
     
     ptMap["illum"] =    ParameterDesc(MTL_illum, kIntegerValue);
+	
+	// separate filename and base path
+	size_t foundpos = path.find_last_of("/\\");
+	if(foundpos == std::string::npos) {
+		filepath = path;
+		basepath = "";
+	} else {
+		basepath = path.substr(0, foundpos + 1); // include separater
+		filepath = path.substr(foundpos + 1);
+	}
+	std::cout << "(base,file):" << basepath << ", " << filepath << std::endl;
 }
 
-void WavefrontObj::load() {
-    loadFile(filepath.c_str());
+void WavefrontObj::setBasePath(std::string path) {
+	basepath = path;
+	if(basepath[basepath.length() - 1] != '/') {
+		basepath.push_back('/');
+	}
 }
 
-void WavefrontObj::loadFile(const char *fpath) {
+bool WavefrontObj::load() {
+    return loadFile(filepath.c_str());
+}
+
+bool WavefrontObj::loadFile(std::string fpath) {
     std::ifstream *fsp = new std::ifstream(fpath);
     
     if(!fsp->is_open()) {
         //std::cout << fpath << " couldn't open" << std::endl;
         delete fsp;
         
+        std::string fullpath;
+		
         if(basepath.length() <= 0) {
-            std::cout << fpath << " couldn't open. no base path." << std::endl;
-            return;
-        }
-        
-        std::string fullpath = basepath + fpath;
+            //std::cout << fpath << " couldn't open. no base path." << std::endl;
+            //return false;
+			
+			std::cout << "WARNING: no base path defined for " << fpath << std::endl;
+			fullpath = fpath;
+        } else {
+			fullpath = basepath + fpath;
+		}
         fsp = new std::ifstream(fullpath.c_str());
         if(!fsp->is_open()) {
             std::cout << fpath << " or " << fullpath << " couldn't open" << std::endl;
             delete fsp;
-            return;
+            return false;
         }
     }
     
     //std::map<std::string, ParameterType> ptMap;
-    if(ptMap.size() <= 0) {
-        
-    }
+    //if(ptMap.size() <= 0) {
+    //}
     
     const int BufMmax = 1024;
     char *buf = new char[1024];
@@ -179,6 +201,7 @@ void WavefrontObj::loadFile(const char *fpath) {
                                 fcinfo.vt = fcinfo.v;
                                 fcinfo.vn = fcinfo.v;
                             } else {
+								// expects v/[t]/n
                                 char purgec;
                                 facestrm >> purgec;
                                 facestrm >> fcinfo.vt;
@@ -205,10 +228,12 @@ void WavefrontObj::loadFile(const char *fpath) {
     fsp->close();
     delete fsp;
     
-    this->endFile();
+    this->endFile(fpath);
+	
+	return true;
 }
 
-void WavefrontObj::importMTL(const char *filename) {
+void WavefrontObj::importMTL(std::string filename) {
     loadFile(filename);
 }
 

@@ -17,17 +17,17 @@ Mesh::Face::Face(const int a, const int b, const int c, const int m) {
 	matid = m;
 }
 
-inline void Mesh::Face::setV(const int a, const int b, const int c) {
+void Mesh::Face::setV(const int a, const int b, const int c) {
 	v0 = a;
 	v1 = b;
 	v2 = c;
 }
-inline void Mesh::Face::setN(const int a, const int b, const int c) {
+void Mesh::Face::setN(const int a, const int b, const int c) {
 	n0 = a;
 	n1 = b;
 	n2 = c;
 }
-inline void Mesh::Face::addAttr(const int attrid, const int a, const int b, const int c) {
+void Mesh::Face::addAttr(const int attrid, const int a, const int b, const int c) {
 	AttrCoord aco = {attrid, a, b, c};
 	attrs.push_back(aco);
 }
@@ -59,15 +59,24 @@ size_t Mesh::addVertexWithAttrs(const Vector3 &p, const Vector3 &n, const Vector
 	}
 	return ret;
 }
-
 size_t Mesh::addVertex(const Vector3 &v) {
 	vertices.push_back(v);
+	//printf("v (%lf,%lf,%lf)\n", v.x, v.y, v.z); //+++++
 	return vertices.size() - 1;
 }
+size_t Mesh::getVertexCount() const {
+	return vertices.size();
+}
+
 size_t Mesh::addNormal(const Vector3 &v) {
 	normals.push_back(v);
+	//printf("vn (%lf,%lf,%lf)\n", v.x, v.y, v.z); //+++++
 	return normals.size() - 1;
 }
+size_t Mesh::getNormalCount() const {
+	return normals.size();
+}
+
 size_t Mesh::newAttributeContainer() {
 	std::vector<Vector3> attrv;
 	attrv.reserve(vertex_reserved);
@@ -79,28 +88,41 @@ size_t Mesh::addAttribute(const int attrid, const Vector3 &v) {
 		throw "vertex attributes out of range";
 	}
 	attributes[attrid].push_back(v);
+	//printf("vt (%lf,%lf,%lf)\n", v.x, v.y, v.z); //+++++
 	return attributes[attrid].size() - 1;
+}
+size_t Mesh::getAttributeCount(const int attrid) const {
+	if(attrid < 0 || attrid > (int)attributes.size()) {
+		throw "vertex attributes out of range";
+	}
+	return attributes[attrid].size();
 }
 
 size_t Mesh::addFace(const Mesh::Face &f) {
 	faces.push_back(f);
+	//printf("f (%d/%d/%d,%d/%d/%d,%d/%d/%d)\n",
+	//	   f.v0, f.attrs[0].co0, f.n0,
+	//	   f.v1, f.attrs[0].co1, f.n1,
+	//	   f.v2, f.attrs[0].co2, f.n2);
 	return faces.size() - 1;
 }
 size_t Mesh::addFace(const int a, const int b, const int c, const int matid) {
 	faces.push_back(Face(a, b, c, matid));
 	return faces.size() - 1;
 }
+size_t Mesh::getFaceCount() const {
+	return faces.size();
+}
 
-/////+++++
 Vector3 Mesh::getVaryingAttr(const int faceid, const int attrid, const Vector3 weights) {
     const Face &face = faces[faceid];
     const AttrCoord &attrco = face.attrs[attrid];
     const std::vector<Vector3> &attrvec = attributes[attrco.attrid];
+    const Vector3 a0 = attrvec[attrco.co0];
     const Vector3 a1 = attrvec[attrco.co1];
     const Vector3 a2 = attrvec[attrco.co2];
-    const Vector3 a3 = attrvec[attrco.co3];
     
-    return a1 * weights.x_ + a2 * weights.y_ + a3 * weights.z_;
+    return a0 * weights.x_ + a1 * weights.y_ + a2 * weights.z_;
 }
 
 void Mesh::calcSmoothNormals() {
@@ -127,7 +149,7 @@ void Mesh::calcSmoothNormals() {
 void Mesh::buildBVH() {
     if(bvhRoot) {
         // rebuild?
-        std::cout << "rebuild BVH ?" << std::endl;
+        std::cout << "WARNING: rebuild BVH ? [mesh:" << this << "]" << std::endl;
         delete bvhRoot;
         bvhRoot = 0;
     }
@@ -145,7 +167,6 @@ void Mesh::buildBVH() {
         ab.dataId = i;
     }
     bvhRoot = new BVHNode();
-    //int maxdepth = recurseBuildBVH(*bvhRoot, faceAABBs, facenum);
     size_t maxdepth = bvhRoot->buildAABBTree(faceAABBs, (int)facenum);
     
     std::cout << "max BVH depth:" << maxdepth << std::endl;
@@ -205,7 +226,7 @@ bool Mesh::triangleIntersect(const int faceid, const Ray &ray, TriangleHitInfo *
 
 bool Mesh::intersectBVHNode(const BVHNode &node, const Ray &ray, TriangleHitInfo *hitinfo) const {
     if(node.isLeaf()) {
-        // 葉ノード
+        // leaf node
         TriangleHitInfo tmp_info;
         if(triangleIntersect(node.dataId, ray, &tmp_info)) {
             if(tmp_info.distance < hitinfo->distance) {
@@ -216,18 +237,18 @@ bool Mesh::intersectBVHNode(const BVHNode &node, const Ray &ray, TriangleHitInfo
         //return false; // at last
     } else {
         double d;
-        if(node.aabb.isIntersect(ray, &d)) { // レイがAABBにヒットしている
-            if(d < hitinfo->distance) { // より近くで
+        if(node.aabb.isIntersect(ray, &d)) { // The Ray intersects AABB
+            if(d < hitinfo->distance) { // closer!
                 TriangleHitInfo nearest_info, tmp_info;
                 for(int i = 0; i < node.childNum; i++) {
-                    // 子ノードをチェック
+                    // check children
                     if(intersectBVHNode(node.children[i], ray, &tmp_info)) {
                         if(tmp_info.distance < nearest_info.distance) {
                             nearest_info = tmp_info;
                         }
                     }
                 }
-                // 今のヒット位置よりも近かったら採用
+                // choose closer one.
                 if(nearest_info.distance < hitinfo->distance) {
                     *hitinfo = nearest_info;
                     return true;
@@ -239,11 +260,11 @@ bool Mesh::intersectBVHNode(const BVHNode &node, const Ray &ray, TriangleHitInfo
     return false;
 }
 
-bool Mesh::isIntersection(const Ray &ray, Intersection *intersect) const {
+bool Mesh::isIntersect(const Ray &ray, Intersection *intersect) const {
     
 #if 0
     /////+++++
-    // brute force now!
+    // brute force
     TriangleHitInfo nearest_info, tmp_info;
     for(int iface = 0; iface < faces.size(); iface++) {
         //printf("face[%d]¥n", iface);//+++++
@@ -273,9 +294,9 @@ bool Mesh::isIntersection(const Ray &ray, Intersection *intersect) const {
     intersect->distance = nearest_info.distance;
     intersect->position = nearest_info.position;
     intersect->normal =
-        normals[hitface.v0] * nearest_info.w0 +
-        normals[hitface.v1] * nearest_info.w1 +
-        normals[hitface.v2] * nearest_info.w2;
+        normals[hitface.n0] * nearest_info.w0 +
+        normals[hitface.n1] * nearest_info.w1 +
+        normals[hitface.n2] * nearest_info.w2;
     // TODO: attributes
     intersect->materialId = hitface.matid;
     intersect->faceId = nearest_info.faceid;
@@ -283,3 +304,40 @@ bool Mesh::isIntersection(const Ray &ray, Intersection *intersect) const {
     
     return true;
 }
+
+void Mesh::prepareRendering() {
+	if(normals.size() <= 0) {
+		printf("mesh [0x%p] may not has normals. generate it.\n", this);
+		
+		normals.resize(vertices.size());
+		for(size_t i = 0; i < faces.size(); i++) {
+			faces[i].n0 = faces[i].v0;
+			faces[i].n1 = faces[i].v1;
+			faces[i].n2 = faces[i].v2;
+		}
+		calcSmoothNormals();
+	}
+	
+	if(!bvhRoot) {
+		buildBVH();
+	}
+}
+
+///
+void Mesh::dumpFaces() const {
+	int facenum = (int)faces.size();
+	
+	for(int i = 0; i < facenum; i++) {
+		Face fc = faces[i];
+		printf("f[%d]:v(%d,%d,%d),n(%d,%d,%d),t(%d,%d,%d)\n", i, fc.v0, fc.v1, fc.v2, fc.n0, fc.n1, fc.n2, fc.attrs[0].co0, fc.attrs[0].co1, fc.attrs[0].co2);
+		Vector3 v0 = vertices[fc.v0];
+		Vector3 v1 = vertices[fc.v1];
+		Vector3 v2 = vertices[fc.v2];
+		printf(" v0(%lf,%lf,%lf),v1(%lf,%lf,%lf),v2(%lf,%lf,%lf)\n", v0.x, v0.y, v0.z, v1.x, v1.y, v1.z, v2.x, v2.y, v2.z);
+		Vector3 n0 = normals[fc.n0];
+		Vector3 n1 = normals[fc.n1];
+		Vector3 n2 = normals[fc.n2];
+		printf(" n0(%lf,%lf,%lf),n1(%lf,%lf,%lf),n2(%lf,%lf,%lf)\n", n0.x, n0.y, n0.z, n1.x, n1.y, n1.z, n2.x, n2.y, n2.z);
+	}
+}
+

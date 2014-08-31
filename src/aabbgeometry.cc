@@ -12,7 +12,7 @@ AABBGeometry::AABBGeometry(const Vector3 min, const Vector3 max):
 
 AABB AABBGeometry::getAABB() const { return aabb; }
 
-bool AABBGeometry::isIntersection(const Ray &ray, Intersection *intersect) const {
+bool AABBGeometry::isIntersect(const Ray &ray, Intersection *intersect) const {
 	double t;
 	int axis;
 	

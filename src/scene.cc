@@ -1,16 +1,29 @@
 
+#include <iostream>
+#include <string>
+
 #include "scene.h"
 #include "camera.h"
+#include "geometry.h"
+#include "mesh.h"
+#include "bsdfdiffuse.h"
 #include "material.h"
 #include "bvhnode.h"
 #include "sceneobject.h"
 #include "intersection.h"
+#include "wavefrontobj.h"
+#include "aabb.h"
+#include "scenesupport.h"
 
+///
 using namespace r1h;
 
 Scene::Scene():
     camera(0), objectBVH(0), bgMaterial(0)
-{}
+{
+    camera = CameraRef(new Camera());
+	bgMaterial = MaterialRef(nullptr);
+}
 
 Scene::~Scene() {
     if(objectBVH) {
@@ -21,10 +34,24 @@ Scene::~Scene() {
 }
     
 bool Scene::load() {
-    camera = CameraRef(new Camera());
-	bgMaterial = MaterialRef(nullptr);
 	// FIXME
+	printf("FIXME : Scene::load\n");
+	return true;
+}
+
+bool Scene::loadWavefrontObj(std::string filename) {
+	SimpleObjLoader loader(filename.c_str(), this);
+	loader.load();
 	
+	/*
+	//+++++
+	for(size_t i = 0; i < sceneObjects.size(); i++) {
+		SceneObject *obj = sceneObjects[i].get();
+		Mesh *mesh = dynamic_cast<Mesh*>(obj->getGeometry());
+		printf("mesh[%ld] %p\n", i, mesh);
+	}
+	//+++++
+	*/
 	return true;
 }
 
@@ -32,6 +59,17 @@ int Scene::addObject(SceneObjectRef objref) {
 	sceneObjects.push_back(objref);
     return (int)sceneObjects.size() - 1;
 };
+
+SceneObject* Scene::getObject(int objid) {
+	if(objid < 0 || objid >= sceneObjects.size()) {
+		return NULL;
+	}
+	return sceneObjects[objid].get();
+}
+
+int Scene::getObjectsCount() const {
+	return (int)sceneObjects.size();
+}
 
 // render
 Camera* Scene::getCamera() {
@@ -48,6 +86,27 @@ Material* Scene::getBackgroundMaterial() {
 
 void Scene::setBackgroundMaterial(MaterialRef matref) {
 	bgMaterial = matref;
+}
+
+
+void Scene::prepareRendering() {
+	std::vector<AABB> aabbvec(sceneObjects.size());
+	
+	// prepare and get AABB
+	for(int i = 0; i < (int)sceneObjects.size(); i++) {
+		sceneObjects[i]->prepareRendering();
+		AABB objaabb = sceneObjects[i]->getAABB();
+		objaabb.dataId = i;
+		aabbvec[i] = objaabb;
+	}
+	
+	if(!objectBVH) {
+		printf("object BVH is already build. rebuild it.\n");
+		delete objectBVH;
+		objectBVH = nullptr;
+	}
+	objectBVH = new BVHNode();
+	objectBVH->buildAABBTree(aabbvec.data(), (int)aabbvec.size());
 }
 
 Color Scene::radiance(Renderer::Context *cntx, const Ray &ray) {
@@ -99,18 +158,19 @@ Color Scene::radiance(Renderer::Context *cntx, const Ray &ray) {
 			const Color albedocol = hitmat->albedo(hitobject, intersect);
             const Color emitcol = hitmat->emission(hitobject, intersect);
             
+#if 1
             radiancecol += Color::mul(emitcol, traceray.weight);
-            
+#else
 			//+++++
 			// for debugging
             // normal
-            //radiancecol += intersect.normal * 0.5 + Vector3(0.5);
-            //continue;
+            radiancecol += intersect.normal * 0.5 + Vector3(0.5);
+            continue;
 			// color
 			//radiancecol += albedocol;
 			//continue;
             //+++++
-			
+#endif
             double russianprob = std::max(albedocol.r, std::max(albedocol.g, albedocol.b));
             if(depth > depthLimit) {
                 russianprob *= pow(0.5, depth - depthLimit);
@@ -144,19 +204,21 @@ Color Scene::radiance(Renderer::Context *cntx, const Ray &ray) {
 
 bool Scene::intersectSceneObjects(const Ray &ray, Intersection *intersect) {
 	
-    // brute force
     intersect->clear();
+	
+#if 1
+    // brute force
     for(int i = 0; i < (int)sceneObjects.size(); ++i) {
 		Intersection tmpinter;
-        if(sceneObjects[i]->isIntersection(ray, &tmpinter)) {
+        if(sceneObjects[i]->isIntersect(ray, &tmpinter)) {
 			if(tmpinter.distance < intersect->distance) {
 				*intersect = tmpinter;
 				intersect->objectId = i;
 			}
         }
     }
-    
+#else
+	// BVH
+#endif
 	return intersect->objectId != Intersection::kNoIntersected;
 }
-
-

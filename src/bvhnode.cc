@@ -92,6 +92,38 @@ int BVHNode::recurseBuildTree(BVHNode &node, AABB *aabbArray, const int aabbnum,
 }
 
 ///
+/*
+BVHNode::TraverseResult BVHNode::isIntersect(Ray &ray, BVHNode &node, TraverseInfo *trvinfo, LeafNodeCallback leafcallback) {
+	if(node.isLeaf()) {
+		// lead
+	} else {
+		double d;
+        if(node.aabb.isIntersect(ray, &d)) {
+			// The Ray intersects AABB
+            if(d < trvinfo->distance) {
+				// closer!
+                TraverseInfo closer_info, tmp_info;
+                for(int i = 0; i < node.childNum; i++) {
+                    // check children
+					TraverseResult trvresult = isIntersect(ray, node.children[i], &tmp_info, leafcallback);
+                    if(trvresult.intersected) {
+                        if(tmp_info.distance < closer_info.distance) {
+                            closer_info = tmp_info;
+                        }
+                    }
+                }
+                // if closer than already calc point.
+                if(closer_info.distance < trvinfo->distance) {
+                    *trvinfo = closer_info;
+                    return trvresult;
+                }
+            }
+        }
+	}
+	return TraverseResult();
+}
+*/
+///
 BVHNode::AABBAxisComparator::AABBAxisComparator(const int a): axisId(a)
 {}
 
