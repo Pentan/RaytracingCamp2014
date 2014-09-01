@@ -4,8 +4,14 @@
 #include "r1htypes.h"
 #include <vector>
 #include "aabb.h"
+#include "intersection.h"
 
 namespace r1h {
+
+class BVHLeaf {
+public:
+	virtual bool isIntersectLeaf(int dataid, const Ray &ray, Intersection *intersect) const = 0;
+};
 
 class BVHNode {
 public:
@@ -25,21 +31,8 @@ public:
     int buildAABBTree(AABB *aabbArray, const int aabbnum);
     
 public:
-	/*
-	struct TraverseInfo {
-		R1hFPType distance;
-	};
+	static bool isIntersectBVHTree(const BVHLeaf *leafobj, const BVHNode &node, const Ray &ray, Intersection *intersect);
 	
-	class TraverseResult {
-	public:
-		bool intersected;
-		TraverseResult();
-	};
-	
-	typedef bool (*LeafNodeCallback)(Ray&, TraverseResult*);
-	
-	static TraverseResult isIntersect(Ray &ray, BVHNode &node, TraverseInfo *trvinfo, LeafNodeCallback leadcallback);
-	*/
 private:
     struct AABBAxisComparator {
         int axisId;

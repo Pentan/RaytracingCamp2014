@@ -31,6 +31,7 @@ OBJS = \
     mesh.o \
     renderer.o \
     scene.o \
+    scenesupport.o \
     scene2013.o \
     sceneobject.o \
     sphere.o \

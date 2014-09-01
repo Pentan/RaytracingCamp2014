@@ -15,6 +15,8 @@
 #include "aabb.h"
 #include "scenesupport.h"
 
+#include "aabbgeometry.h"
+
 ///
 using namespace r1h;
 
@@ -100,13 +102,15 @@ void Scene::prepareRendering() {
 		aabbvec[i] = objaabb;
 	}
 	
-	if(!objectBVH) {
+	// build BVH tree
+	if(objectBVH) {
 		printf("object BVH is already build. rebuild it.\n");
 		delete objectBVH;
 		objectBVH = nullptr;
 	}
 	objectBVH = new BVHNode();
-	objectBVH->buildAABBTree(aabbvec.data(), (int)aabbvec.size());
+	int maxdepth = objectBVH->buildAABBTree(aabbvec.data(), (int)aabbvec.size());
+	printf("%ld objects. BVH max depth: %d\n", sceneObjects.size(), maxdepth);
 }
 
 Color Scene::radiance(Renderer::Context *cntx, const Ray &ray) {
@@ -202,11 +206,33 @@ Color Scene::radiance(Renderer::Context *cntx, const Ray &ray) {
     //return Color(fabs(ray.direction.x), fabs(ray.direction.y), fabs(ray.direction.z));
 }
 
+bool Scene::isIntersectLeaf(int dataid, const Ray &ray, Intersection *intersect) const {
+	SceneObject *obj = sceneObjects[dataid].get();
+	Intersection tmp_isect;
+	
+#if 0
+	AABBGeometry aabbgeom(obj->getAABB());
+	if(aabbgeom.isIntersect(ray, &tmp_isect)) {
+		*intersect = tmp_isect;
+		intersect->objectId = dataid;
+		return true;
+	}
+#else
+	if(obj->isIntersect(ray, &tmp_isect)) {
+		*intersect = tmp_isect;
+		intersect->objectId = dataid;
+		return true;
+	}
+#endif
+	
+	return false;
+}
+
 bool Scene::intersectSceneObjects(const Ray &ray, Intersection *intersect) {
 	
     intersect->clear();
 	
-#if 1
+#if 0
     // brute force
     for(int i = 0; i < (int)sceneObjects.size(); ++i) {
 		Intersection tmpinter;
@@ -217,8 +243,10 @@ bool Scene::intersectSceneObjects(const Ray &ray, Intersection *intersect) {
 			}
         }
     }
+	return intersect->objectId != Intersection::kNoIntersected;
 #else
 	// BVH
+	return BVHNode::isIntersectBVHTree(this, *objectBVH, ray, intersect);
 #endif
-	return intersect->objectId != Intersection::kNoIntersected;
+	
 }

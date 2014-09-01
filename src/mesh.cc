@@ -178,8 +178,9 @@ AABB Mesh::getAABB() const {
 	return bvhRoot->aabb;
 }
 
-bool Mesh::triangleIntersect(const int faceid, const Ray &ray, TriangleHitInfo *hitinfo) const {
-    const Face &face = faces[faceid];
+//bool Mesh::triangleIntersect(const int faceid, const Ray &ray, Intersection *intersect) const {
+bool Mesh::isIntersectLeaf(int dataid, const Ray &ray, Intersection *intersect) const {
+    const Face &face = faces[dataid];
     const Vector3 &v0 = vertices[face.v0];
     const Vector3 &v1 = vertices[face.v1];
     const Vector3 &v2 = vertices[face.v2];
@@ -196,111 +197,69 @@ bool Mesh::triangleIntersect(const int faceid, const Ray &ray, TriangleHitInfo *
     const double c = Vector3::dot(v, ray.direction) * div;
     
     /*
-    printf("face(%d,%d,%d)¥n", face.v0, face.v1, face.v2);
-    v0.print("v0");
-    v1.print("v1");
-    v2.print("v2");
-    v01.print("v01");
-    v02.print("v02");
-    ray.dir_.print("ray.dir_");
-    ray.org_.print("ray.org_");
-    r.print("r");
-    u.print("u");
-    v.print("v");
-    printf("(t,b,c)=(%lf,%lf,%lf)¥n", t, b, c);//+++++
-    */
+	 printf("face(%d,%d,%d)¥n", face.v0, face.v1, face.v2);
+	 v0.print("v0");
+	 v1.print("v1");
+	 v2.print("v2");
+	 v01.print("v01");
+	 v02.print("v02");
+	 ray.dir_.print("ray.dir_");
+	 ray.org_.print("ray.org_");
+	 r.print("r");
+	 u.print("u");
+	 v.print("v");
+	 printf("(t,b,c)=(%lf,%lf,%lf)¥n", t, b, c);//+++++
+	 */
     if((b + c < 1.0 && b > 0.0 && c > 0.0) && t > 0.0) {
         // hit
         const double a = 1.0 - b - c;
-        hitinfo->distance = t;
-        hitinfo->position = v0 * a + v1 * b + v2 * c;
-        hitinfo->w0 = a;
-        hitinfo->w1 = b;
-        hitinfo->w2 = c;
-        hitinfo->faceid = faceid;
+        intersect->distance = t;
+        intersect->position = v0 * a + v1 * b + v2 * c;
+        intersect->varyingWeight.set(a, b, c);
+        intersect->faceId = dataid;
         
         return true;
     }
     return false;
 }
 
-bool Mesh::intersectBVHNode(const BVHNode &node, const Ray &ray, TriangleHitInfo *hitinfo) const {
-    if(node.isLeaf()) {
-        // leaf node
-        TriangleHitInfo tmp_info;
-        if(triangleIntersect(node.dataId, ray, &tmp_info)) {
-            if(tmp_info.distance < hitinfo->distance) {
-                *hitinfo = tmp_info;
-                return true;
-            }
-        }
-        //return false; // at last
-    } else {
-        double d;
-        if(node.aabb.isIntersect(ray, &d)) { // The Ray intersects AABB
-            if(d < hitinfo->distance) { // closer!
-                TriangleHitInfo nearest_info, tmp_info;
-                for(int i = 0; i < node.childNum; i++) {
-                    // check children
-                    if(intersectBVHNode(node.children[i], ray, &tmp_info)) {
-                        if(tmp_info.distance < nearest_info.distance) {
-                            nearest_info = tmp_info;
-                        }
-                    }
-                }
-                // choose closer one.
-                if(nearest_info.distance < hitinfo->distance) {
-                    *hitinfo = nearest_info;
-                    return true;
-                }
-            }
-        }
-    }
-    
-    return false;
-}
-
 bool Mesh::isIntersect(const Ray &ray, Intersection *intersect) const {
     
 #if 0
-    /////+++++
     // brute force
-    TriangleHitInfo nearest_info, tmp_info;
+    Intersection nearest_isect, tmp_isect;
     for(int iface = 0; iface < faces.size(); iface++) {
         //printf("face[%d]¥n", iface);//+++++
-        if(triangleIntersect(iface, ray, &tmp_info)) {
-            if(tmp_info.distance < nearest_info.distance) {
-                nearest_info = tmp_info;
-                nearest_info.faceid = iface;
+        if(triangleIntersect(iface, ray, &tmp_isect)) {
+            if(tmp_isect.distance < nearest_isect.distance) {
+                nearest_isect = tmp_isect;
+                nearest_isect.faceId = iface;
             }
         }
     }
-    if(nearest_info.faceid < 0) {
+    if(nearest_isect.faceId < 0) {
         return false;
     }
-    /////+++++
 #else
-    /////+++++
     // traverse BVH
-    TriangleHitInfo nearest_info;
-    if(!intersectBVHNode(*bvhRoot, ray, &nearest_info)) {
+    Intersection nearest_isect;
+	if(!BVHNode::isIntersectBVHTree(this, *bvhRoot, ray, &nearest_isect)) {
         return false;
     }
-    /////+++++
 #endif
     
     // calc face infomation
-    const Face &hitface = faces[nearest_info.faceid];
-    intersect->distance = nearest_info.distance;
-    intersect->position = nearest_info.position;
+    const Face &hitface = faces[nearest_isect.faceId];
+	*intersect = nearest_isect;
+    //intersect->distance = nearest_info.distance;
+    //intersect->position = nearest_info.position;
+    //intersect->faceId = nearest_info.faceid;
+	//intersect->varyingWeight = Vector3(nearest_info.w0, nearest_info.w1, nearest_info.w2);
     intersect->normal =
-        normals[hitface.n0] * nearest_info.w0 +
-        normals[hitface.n1] * nearest_info.w1 +
-        normals[hitface.n2] * nearest_info.w2;
-    // TODO: attributes
+        normals[hitface.n0] * nearest_isect.varyingWeight.x +
+        normals[hitface.n1] * nearest_isect.varyingWeight.y +
+        normals[hitface.n2] * nearest_isect.varyingWeight.z;
     intersect->materialId = hitface.matid;
-    intersect->faceId = nearest_info.faceid;
-    intersect->varyingWeight = Vector3(nearest_info.w0, nearest_info.w1, nearest_info.w2);
     
     return true;
 }

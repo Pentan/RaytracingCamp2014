@@ -92,37 +92,42 @@ int BVHNode::recurseBuildTree(BVHNode &node, AABB *aabbArray, const int aabbnum,
 }
 
 ///
-/*
-BVHNode::TraverseResult BVHNode::isIntersect(Ray &ray, BVHNode &node, TraverseInfo *trvinfo, LeafNodeCallback leafcallback) {
-	if(node.isLeaf()) {
-		// lead
-	} else {
-		double d;
-        if(node.aabb.isIntersect(ray, &d)) {
-			// The Ray intersects AABB
-            if(d < trvinfo->distance) {
-				// closer!
-                TraverseInfo closer_info, tmp_info;
+bool BVHNode::isIntersectBVHTree(const BVHLeaf *leafobj, const BVHNode &node, const Ray &ray, Intersection *intersect) {
+    if(node.isLeaf()) {
+        // leaf node
+        Intersection tmp_isect;
+        if(leafobj->isIntersectLeaf(node.dataId, ray, &tmp_isect)) {
+            if(tmp_isect.distance < intersect->distance) {
+                *intersect = tmp_isect;
+                return true;
+            }
+        }
+        //return false; // at last
+    } else {
+        double d;
+        if(node.aabb.isIntersect(ray, &d)) { // The Ray intersects AABB
+            if(d < intersect->distance) { // closer!
+                Intersection nearest_isect, tmp_isect;
                 for(int i = 0; i < node.childNum; i++) {
                     // check children
-					TraverseResult trvresult = isIntersect(ray, node.children[i], &tmp_info, leafcallback);
-                    if(trvresult.intersected) {
-                        if(tmp_info.distance < closer_info.distance) {
-                            closer_info = tmp_info;
+                    if(isIntersectBVHTree(leafobj, node.children[i], ray, &tmp_isect)) {
+                        if(tmp_isect.distance < nearest_isect.distance) {
+                            nearest_isect = tmp_isect;
                         }
                     }
                 }
-                // if closer than already calc point.
-                if(closer_info.distance < trvinfo->distance) {
-                    *trvinfo = closer_info;
-                    return trvresult;
+                // choose closer one.
+                if(nearest_isect.distance < intersect->distance) {
+                    *intersect = nearest_isect;
+                    return true;
                 }
             }
         }
-	}
-	return TraverseResult();
+    }
+    
+    return false;
 }
-*/
+
 ///
 BVHNode::AABBAxisComparator::AABBAxisComparator(const int a): axisId(a)
 {}

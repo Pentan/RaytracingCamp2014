@@ -29,10 +29,11 @@ int main(int argc, char *argv[]) {
     Renderer *render = new Renderer();
     Renderer::Config renderConf = render->getConfig();
 	
-    renderConf.width = 1280 / 4;
-    renderConf.height = 720 / 4;
+    renderConf.width = 1280 / 2;
+    renderConf.height = 720 / 2;
 	renderConf.samples = 8;
 	renderConf.subSamples = 1;
+	renderConf.tileSize = 64;
 	
 	// parse render config from arguments?
 	
@@ -57,9 +58,10 @@ int main(int argc, char *argv[]) {
 		//loaded = scene->loadWavefrontObj("models/cube.obj");
 		//loaded = scene->loadWavefrontObj("models/monky_flat.obj");
 		//loaded = scene->loadWavefrontObj("models/monky_smooth.obj");
-		loaded = scene->loadWavefrontObj("models/3objs.obj");
+		//loaded = scene->loadWavefrontObj("models/3objs.obj");
 		//loaded = scene->loadWavefrontObj("models/3cubes.obj");
 		//loaded = scene->loadWavefrontObj("models/2013/mainscene.obj");
+		loaded = scene->loadWavefrontObj("models/manyobjs.obj");
 		//loaded = false;
 #else
 		// On code scene

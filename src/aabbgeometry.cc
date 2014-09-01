@@ -10,6 +10,10 @@ AABBGeometry::AABBGeometry(const Vector3 min, const Vector3 max):
 	Geometry(), aabb(min, max)
 {}
 
+AABBGeometry::AABBGeometry(const AABB inaabb):
+	Geometry(), aabb(inaabb)
+{}
+
 AABB AABBGeometry::getAABB() const { return aabb; }
 
 bool AABBGeometry::isIntersect(const Ray &ray, Intersection *intersect) const {

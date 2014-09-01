@@ -30,7 +30,7 @@ Face {
 
 namespace r1h {
 
-class Mesh : public Geometry {
+class Mesh : public Geometry, public BVHLeaf {
 public:
 	
     static const int kTypeID;
@@ -76,24 +76,17 @@ public:
 	
     Vector3 getVaryingAttr(const int faceid, const int attrid, const Vector3 weights);
     
-    /////
-    struct TriangleHitInfo {
-        double distance;
-        Vector3 position;
-        double w0, w1, w2;
-        int faceid;
-        TriangleHitInfo(): distance(kINF), faceid(-1) {}
-    };
-    
     void calcSmoothNormals();
     void buildBVH();
-    
-    bool triangleIntersect(const int faceid, const Ray &ray, TriangleHitInfo *hitinfo) const;
 	
 	// override
+	// Geometry
 	virtual AABB getAABB() const;
     virtual bool isIntersect(const Ray &ray, Intersection *intersect) const;
     virtual void prepareRendering();
+	// BVHLeaf
+	virtual bool isIntersectLeaf(int dataid, const Ray &ray, Intersection *intersect) const;
+	//bool triangleIntersect(const int faceid, const Ray &ray, Intersection *intersect) const;
 	
 	/// for debug
 	void dumpFaces() const;
@@ -108,9 +101,6 @@ private:
     
     int vertex_reserved;
     int face_reserved;
-	
-    //int recurseBuildBVH(BVHNode &node, AABB *aabbPtrs, const int aabbnum, const int depth=0);
-    bool intersectBVHNode(const BVHNode &node, const Ray &ray, TriangleHitInfo *hitinfo) const;
 };
 
 }

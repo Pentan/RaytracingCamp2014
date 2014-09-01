@@ -8,21 +8,22 @@
 
 namespace r1h {
 
-	class Intersection {
+class Intersection {
 public:
     enum {
         kNoIntersected = -1
     };
     
     R1hFPType distance;
+	Vector3 varyingWeight;
+    int faceId;
+	
     Vector3 normal;
     Vector3 position;
     
     int materialId;
-    int faceId;
     int objectId;
 	
-	Vector3 varyingWeight;
     
 	/*
 	 struct {
@@ -32,7 +33,7 @@ public:
 	 } world, local;
 	 */
 	
-    std::vector<Vector3> attributes;
+    //std::vector<Vector3> attributes;
     
     //Material *material;
     
