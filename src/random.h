@@ -16,10 +16,18 @@ public:
         return seed_[3] = (seed_[3] ^ (seed_[3] >> 19)) ^ (t ^ (t >> 8));
     }
     
+	double nextf(void) {
+        return (double)next() / (UINT_MAX + 1.0);
+    }
+	
     double next01(void) {
         return (double)next() / UINT_MAX;
     }
     
+    double next11(void) {
+        return (double)(next() + 0.5) / (UINT_MAX + 1.0) * 2.0 - 1.0;
+    }
+	
     void setSeed(const unsigned int iseed) {
         unsigned int s = iseed;
         for(int i = 1; i <= 4; i++) {

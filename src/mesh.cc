@@ -127,6 +127,9 @@ Vector3 Mesh::getVaryingAttr(const int faceid, const int attrid, const Vector3 w
 
 void Mesh::calcSmoothNormals() {
     // clear normals
+	if(normals.size() < vertices.size()) {
+		normals.resize(vertices.size());
+	}
     for(size_t i = 0; i < normals.size(); i++) {
         normals[i] = Vector3(0.0, 0.0, 0.0);
     }

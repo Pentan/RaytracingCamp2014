@@ -24,7 +24,11 @@ Color FrameBuffer::getColorAt(const int x, const int y) const {
 
 
 FrameBuffer::Tile FrameBuffer::makeTile(const int x, const int y, const int w, const int h) const {
-    Tile ret(x, y, x + w, y + h);
+    Tile ret;
+	ret.startx = x;
+	ret.starty = y;
+	ret.endx = x + w;
+	ret.endy = y + h;
     
 	// iteration expectes for(i=start; i < end; i++)
 	

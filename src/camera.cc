@@ -1,6 +1,8 @@
 
-#include "camera.h"
+#include <iostream>
 #include <cmath>
+#include "camera.h"
+#include "random.h"
 
 using namespace r1h;
 
@@ -10,7 +12,9 @@ Camera::Camera():
     up(0.0, 1.0, 0.0),
     side(1.0, 0.0, 0.0),
     aspect(1.778),
-    screenLeft(1.0)
+    screenLeft(1.0),
+	focusDistance(1.0),
+	apertureRadius(0.0)
 {}
 
 Camera::~Camera() {}
@@ -30,15 +34,45 @@ void Camera::setFocal(const R1hFPType focalmm, const R1hFPType sensorwidth) {
     screenLeft = sensorwidth / focalmm;
 }
 void Camera::setFieldOfView(const R1hFPType vdegree) {
-    screenLeft = tan(vdegree * M_PI / 180.0 * 0.5) * 2.0;
+    screenLeft = tan(vdegree * kPI / 180.0 * 0.5) * 2.0;
+}
+
+void Camera::setFocusDistance(const R1hFPType dist) {
+	focusDistance = dist;
+}
+void Camera::setApertureRadius(const R1hFPType r) {
+	apertureRadius = r;
 }
 
 R1hFPType Camera::getAspectRatio() const {
 	return aspect;
 }
 
-Ray Camera::getRay(const double tx, const double ty) const {
-    Vector3 left = side * (screenLeft * tx * 0.5);
+Ray Camera::getRay(const double tx, const double ty, Random *rnd) const {
+	Vector3 left = side * (screenLeft * tx * 0.5);
     Vector3 top = up * (screenLeft / aspect * ty * 0.5);
-    return Ray(position, Vector3::normalized(direction + left + top));
+	Vector3 eyep, dir;
+	
+	if(apertureRadius > 0.0) {
+		// use DOF
+		R1hFPType rx, ry;
+		do {
+			rx = rnd->next11();
+			ry = rnd->next11();
+		} while(rx * rx + ty * ty > 1.0);
+		
+		rx *= apertureRadius;
+		ry *= apertureRadius;
+		
+		Vector3 focusp = position + (direction + left + top) * focusDistance;
+		eyep = position + side * rx + up * ry;
+		dir = focusp - eyep;
+	}
+	else {
+		eyep = position;
+		dir = direction + left + top;
+	}
+	
+    dir.normalize();
+    return Ray(eyep, dir);
 }

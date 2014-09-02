@@ -142,13 +142,28 @@ void SimpleObjLoader::foundInteger(const ParameterType pt, const int i) {
 	}
 }
 // f
-void SimpleObjLoader::foundFace(const ParameterType pt, const std::vector<FaceInfo> &fids) {
+void SimpleObjLoader::foundFace(const ParameterType pt, const std::vector<FaceInfo> &fidvec) {
 	Mesh::Face face;
+	std::vector<FaceInfo> fids(fidvec.size());
+	
+	for(size_t i = 0; i < fids.size(); i++) {
+		fids[i].v = fidvec[i].v - vOffset;
+		if(fidvec[i].vn == 0) {
+			fids[i].vn = fids[i].v;
+		} else {
+			fids[i].vn = fidvec[i].vn - vnOffset;
+		}
+		if(fidvec[i].vt == 0) {
+			fids[i].vt = fids[i].v;
+		} else {
+			fids[i].vt = fidvec[i].vt - vtOffset;
+		}
+	}
 	
 	// first triangle
-	face.setV(fids[0].v - vOffset, fids[1].v - vOffset, fids[2].v - vOffset);
-	face.setN(fids[0].vn - vnOffset, fids[1].vn - vnOffset, fids[2].vn - vnOffset);
-	face.addAttr(0, fids[0].vt - vtOffset, fids[1].vt - vtOffset, fids[2].vt - vtOffset);
+	face.setV(fids[0].v, fids[1].v, fids[2].v);
+	face.setN(fids[0].vn, fids[1].vn, fids[2].vn);
+	face.addAttr(0, fids[0].vt, fids[1].vt, fids[2].vt);
 	face.matid = curMatId;
 	curMesh->addFace(face);
 	
@@ -156,9 +171,9 @@ void SimpleObjLoader::foundFace(const ParameterType pt, const std::vector<FaceIn
 	
 	if(fids.size() > 3) {
 		// quad
-		face.setV(fids[2].v - vOffset, fids[3].v - vOffset, fids[0].v - vOffset);
-		face.setN(fids[2].vn - vnOffset, fids[3].vn - vnOffset, fids[0].vn - vnOffset);
-		face.addAttr(0, fids[2].vt - vtOffset, fids[3].vt - vtOffset, fids[0].vt - vtOffset);
+		face.setV(fids[2].v, fids[3].v, fids[0].v);
+		face.setN(fids[2].vn, fids[3].vn, fids[0].vn);
+		face.addAttr(0, fids[2].vt, fids[3].vt, fids[0].vt);
 		face.matid = curMatId;
 		curMesh->addFace(face);
 	}
@@ -180,22 +195,20 @@ void SimpleObjLoader::endFile(std::string fullpath) {
 		camera->setAspectRatio(aspect);
 		
 		Vector3 aabbsize = sceneAABB.max - sceneAABB.min;
-		R1hFPType d = aabbsize.y * 0.5 / tan(fovdeg * 0.5 * M_PI / 180.0);
-		
-		/*
-		/////
-		int objcount = scene->getObjectsCount();
-		for(int i = 0; i < objcount; i++) {
-			SceneObject *obj = scene->getObject(i);
-			Mesh *mesh = dynamic_cast<Mesh*>(obj->getGeometry());
-			//mesh->calcSmoothNormals();
-			mesh->dumpFaces();
-		}
-		/////
-		*/
+		R1hFPType d = aabbsize.y * 0.5 / tan(fovdeg * 0.5 * kPI / 180.0);
 		
 		int objcount = scene->getObjectsCount();
 		printf("%d objects loaded\n", objcount);
+		
+		// if normals are not contained
+		for(int i = 0; i < objcount; i++) {
+			SceneObject *obj = scene->getObject(i);
+			Mesh *mesh = dynamic_cast<Mesh*>(obj->getGeometry());
+			if(mesh->getNormalCount() <= 1) {
+				mesh->calcSmoothNormals();
+			}
+			//mesh->dumpFaces();
+		}
 		
 		sceneAABB.updateCentroid();
 		Vector3 look = sceneAABB.centroid;

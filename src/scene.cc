@@ -34,12 +34,14 @@ Scene::~Scene() {
         objectBVH = NULL;
     }
 }
-    
+
+/*
 bool Scene::load() {
 	// FIXME
 	printf("FIXME : Scene::load\n");
 	return true;
 }
+*/
 
 bool Scene::loadWavefrontObj(std::string filename) {
 	SimpleObjLoader loader(filename.c_str(), this);
@@ -210,7 +212,7 @@ bool Scene::isIntersectLeaf(int dataid, const Ray &ray, Intersection *intersect)
 	SceneObject *obj = sceneObjects[dataid].get();
 	Intersection tmp_isect;
 	
-#if 0
+#if 0 // AABB display for debug
 	AABBGeometry aabbgeom(obj->getAABB());
 	if(aabbgeom.isIntersect(ray, &tmp_isect)) {
 		*intersect = tmp_isect;

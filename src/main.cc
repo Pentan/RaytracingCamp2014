@@ -29,10 +29,10 @@ int main(int argc, char *argv[]) {
     Renderer *render = new Renderer();
     Renderer::Config renderConf = render->getConfig();
 	
-    renderConf.width = 1280 / 2;
-    renderConf.height = 720 / 2;
-	renderConf.samples = 8;
-	renderConf.subSamples = 1;
+    renderConf.width = 1280 / 4;
+    renderConf.height = 720 / 4;
+	renderConf.samples = 16;
+	renderConf.subSamples = 2;
 	renderConf.tileSize = 64;
 	
 	// parse render config from arguments?
@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
 	} else {
 		printf("usage:%s [file.obj]\n", argv[0]);
 		printf("no obj set. setup default scene.\n");
-#if 1
+#if 0
 		//+++++
 		//loaded = scene->loadWavefrontObj("models/cube.obj");
 		//loaded = scene->loadWavefrontObj("models/monky_flat.obj");
@@ -61,16 +61,18 @@ int main(int argc, char *argv[]) {
 		//loaded = scene->loadWavefrontObj("models/3objs.obj");
 		//loaded = scene->loadWavefrontObj("models/3cubes.obj");
 		//loaded = scene->loadWavefrontObj("models/2013/mainscene.obj");
-		loaded = scene->loadWavefrontObj("models/manyobjs.obj");
+		//loaded = scene->loadWavefrontObj("models/manyobjs.obj");
 		//loaded = false;
 #else
 		// On code scene
-		loaded = scene->load();
+		//loaded = scene->load();
+		loaded = true;
 		
-		setupTestCubeScene(*scene); //+++++
+		//setupTestCubeScene(*scene); //+++++
 		
 		//+++++ edupt cornel box scene +++++
 		//EduptScene::load(scene, (double)renderConf.width / renderConf.height);
+		EduptScene::load2(scene, (double)renderConf.width / renderConf.height);
 		//+++++
 		//+++++ Render Camp 2013 scene +++++
 		//setupMainScene2013(*scene);

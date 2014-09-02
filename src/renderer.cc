@@ -135,7 +135,7 @@ void Renderer::renderTile(Context *cntx, Scene *scene, FrameBuffer::Tile tile) {
                     R1hFPType cy = py * divh * 2.0 - 1.0;
                     
                     for(int smpl = 0; smpl < config.samples; smpl++) {
-                        Ray ray = camera->getRay(cx, cy);
+                        Ray ray = camera->getRay(cx, cy, &cntx->random);
                         Color c = scene->radiance(cntx, ray);
                         frameBuffer->accumulate(ix, iy, c);
                     }

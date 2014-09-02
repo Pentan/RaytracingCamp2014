@@ -40,6 +40,8 @@ private:
 class EduptScene {
 public:
 	static bool load(Scene *scene, double aspect);
+	
+	static bool load2(Scene *scene, double aspect);
 };
 
 }

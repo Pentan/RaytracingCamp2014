@@ -45,7 +45,7 @@ public:
 	// illum
 	void foundInteger(const ParameterType pt, const int i);
 	// f
-	void foundFace(const ParameterType pt, const std::vector<FaceInfo> &fids);
+	void foundFace(const ParameterType pt, const std::vector<FaceInfo> &fidvec);
 	// mtl
 	//void importMTL(const char *filename);
 	// endof .mtl or .obj

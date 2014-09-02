@@ -21,7 +21,7 @@ public:
     ~Scene();
     
     // setup
-    bool load();
+    //bool load();
 	bool loadWavefrontObj(std::string filename);
 	
     int addObject(SceneObjectRef objref);

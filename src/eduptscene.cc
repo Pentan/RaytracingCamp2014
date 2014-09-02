@@ -132,3 +132,59 @@ bool EduptScene::load(Scene *scene, double aspect) {
 	
 	return true;
 }
+
+bool EduptScene::load2(Scene *scene, double aspect) {
+	
+	struct SphereDef {
+		R1hFPType r;
+		Vector3 pos;
+		Color emittion;
+		Color diffuse;
+		EduptMaterial::ReflectionType type;
+	} spheres[] = {
+		{10.0, Vector3(-15.0, 0.0, 20.0),         Color(), Color(0.0 , 0.75, 0.25), EduptMaterial::DIFFUSE},
+		{10.0, Vector3( 15.0, 0.0, 20.0),         Color(), Color(0.5 , 0.75, 0.5 ), EduptMaterial::DIFFUSE},
+		{10.0, Vector3(-15.0, 0.0, 40.0),         Color(), Color(0.75, 0.0 , 0.25), EduptMaterial::DIFFUSE},
+		{10.0, Vector3( 15.0, 0.0, 40.0),         Color(), Color(0.75, 0.5 , 0.5 ), EduptMaterial::DIFFUSE},
+		{10.0, Vector3(-15.0, 0.0, 60.0),         Color(), Color(0.0 , 0.25, 0.75), EduptMaterial::DIFFUSE},
+		{10.0, Vector3( 15.0, 0.0, 60.0),         Color(), Color(0.5 , 0.5 , 0.75), EduptMaterial::DIFFUSE},
+		{10.0, Vector3(-15.0, 0.0, 80.0),         Color(), Color(0.75, 0.75, 0.0 ), EduptMaterial::DIFFUSE},
+		{10.0, Vector3( 15.0, 0.0, 80.0),         Color(), Color(0.75, 0.5 , 0.5 ), EduptMaterial::DIFFUSE},
+
+	};
+	int numspheres = sizeof(spheres) /sizeof(SphereDef);
+	
+	// spheres
+	for(int i = 0; i < numspheres; i++) {
+		SphereDef &sphrdef = spheres[i];
+		
+		SceneObject *obj = new SceneObject();
+		
+		Sphere *sphere = new Sphere(sphrdef.r, sphrdef.pos);
+		obj->setGeometry(GeometryRef(sphere));
+		
+		EduptMaterial *mat = new EduptMaterial(sphrdef.diffuse, sphrdef.emittion, sphrdef.type);
+		obj->addMaterial(MaterialRef(mat));
+		
+		scene->addObject(SceneObjectRef(obj));
+	}
+	
+	// bg
+	EduptMaterial *bgmat = new EduptMaterial(Color(0.5), Color(0.5), EduptMaterial::BACKGROUND);
+	scene->setBackgroundMaterial(MaterialRef(bgmat));
+	
+	// camera
+	Camera *camera = new Camera();
+	camera->setLookat(
+					  Vector3(0.0, 10.0, 0.0),
+					  Vector3(0.0, 0.0, 40.0),
+					  Vector3(0.0, 1.0, 0.0)
+					  );
+	camera->setFocal(40.0, 30.0 * aspect);
+	camera->setAspectRatio(aspect);
+	camera->setFocusDistance(40.0);
+	camera->setApertureRadius(1.5);
+	scene->setCamera(CameraRef(camera));
+	
+	return true;
+}

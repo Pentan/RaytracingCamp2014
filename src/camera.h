@@ -18,10 +18,13 @@ public:
     void setFocal(const R1hFPType focalmm, const R1hFPType sensorwidth=36.0);
     void setFieldOfView(const R1hFPType vdegree);
     
+	void setFocusDistance(const R1hFPType dist);
+	void setApertureRadius(const R1hFPType r);
+	
 	R1hFPType getAspectRatio() const;
 	
     /// expects(-1,1)
-    Ray getRay(const double tx, const double ty) const;
+    Ray getRay(const double tx, const double ty, Random *rnd) const;
     
 private:
     Vector3 position;
@@ -31,6 +34,9 @@ private:
     
     R1hFPType aspect;
     R1hFPType screenLeft;
+	
+	R1hFPType focusDistance;
+	R1hFPType apertureRadius;
 };
 
 typedef std::shared_ptr<Camera> CameraRef;

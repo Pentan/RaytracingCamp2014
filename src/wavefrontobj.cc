@@ -198,8 +198,9 @@ bool WavefrontObj::loadFile(std::string fpath) {
                             std::istringstream facestrm(fistr);
                             facestrm >> fcinfo.v;
                             if(facestrm.eof()) {
-                                fcinfo.vt = fcinfo.v;
-                                fcinfo.vn = fcinfo.v;
+								// no normal and uv
+                                fcinfo.vt = 0;
+                                fcinfo.vn = 0;
                             } else {
 								// expects v/[t]/n
                                 char purgec;

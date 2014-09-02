@@ -36,13 +36,5 @@ AABB SceneObject::getAABB() const {
 }
 
 bool SceneObject::isIntersect(const Ray &ray, Intersection *intersect) {
-#if 1
 	return geometry->isIntersect(ray, intersect);
-#else
-	AABB aabb = getAABB();
-	if(aabb.isIntersect(ray)) {
-		return geometry->isIntersect(ray, intersect);
-	}
-	return false;
-#endif
 }

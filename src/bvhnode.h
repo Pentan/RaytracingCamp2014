@@ -10,6 +10,7 @@ namespace r1h {
 
 class BVHLeaf {
 public:
+	virtual ~BVHLeaf() {};
 	virtual bool isIntersectLeaf(int dataid, const Ray &ray, Intersection *intersect) const = 0;
 };
 

@@ -10,10 +10,6 @@ public:
     struct Tile {
         int startx, endx;
         int starty, endy;
-        
-        Tile(int sx, int sy, int ex, int ey):
-            startx(sx), endx(ex), starty(sy), endy(ey)
-        {}
     };
     
 public:
