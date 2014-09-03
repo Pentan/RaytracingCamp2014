@@ -35,11 +35,11 @@ inline void AbstractToneMapper::put32(const unsigned long l, std::ofstream &ofs)
     ofs.put((l >> 24) & 0xff);
 }
 
-void AbstractToneMapper::exportBMP(const std::string outpath) {
+void AbstractToneMapper::exportBMP(const FrameBuffer *frmbuf, const std::string outpath) {
     printf("export %s\n", outpath.c_str());
     
-    int width = framebuffer->getWidth();
-    int height = framebuffer->getHeight();
+    int width = frmbuf->getWidth();
+    int height = frmbuf->getHeight();
     
     // stream open
     std::ofstream ofs(outpath.c_str(), std::ios::out | std::ios::binary);
@@ -80,7 +80,7 @@ void AbstractToneMapper::exportBMP(const std::string outpath) {
     int rgb[3];
     for(int y = height - 1; y >= 0; y--) {
         for(int x = 0; x < width; x++) {
-            const Color &srccol = framebuffer->getColorAt(x, y);
+            const Color &srccol = frmbuf->getColorAt(x, y);
             const Color outcol = tonemap(srccol);
             packColor(rgb, outcol);
             
@@ -95,15 +95,15 @@ void AbstractToneMapper::exportBMP(const std::string outpath) {
     std::cerr << outpath << " saved" << std::endl;
 }
 
-void AbstractToneMapper::exportTGA(const std::string outpath) {
+void AbstractToneMapper::exportTGA(const FrameBuffer *frmbuf, const std::string outpath) {
     printf("export %s\n", outpath.c_str());
     
     std::ofstream ofs(outpath, std::ios::out | std::ios::binary);
     
     // now, Bit per pixel is only 24bit format.
     const int bpp = 24;
-    int width = framebuffer->getWidth();
-    int height = framebuffer->getHeight();
+    int width = frmbuf->getWidth();
+    int height = frmbuf->getHeight();
     
     // header
     // image id field length
@@ -133,12 +133,12 @@ void AbstractToneMapper::exportTGA(const std::string outpath) {
     
     // pixels
     int stride = bpp / 8;
-    int rgb[stride];
+    int rgb[4];
     
     //for(int y = height - 1; y >= 0; y--) {
     for(int y = 0; y < height; y--) {
         for(int x = 0; x < width; x++) {
-            const Color &srccol = framebuffer->getColorAt(x, y);
+            const Color &srccol = frmbuf->getColorAt(x, y);
             const Color outcol = tonemap(srccol);
             packColor(rgb, outcol);
             

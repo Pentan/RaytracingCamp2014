@@ -12,7 +12,7 @@ class FrameBuffer;
 class ToneMapper : public AbstractToneMapper 
 {
 public:
-    ToneMapper(FrameBuffer *buffer);
+    ToneMapper();
     virtual ~ToneMapper();
 };
 

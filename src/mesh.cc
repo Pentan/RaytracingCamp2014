@@ -158,7 +158,7 @@ void Mesh::buildBVH() {
     }
     
     size_t facenum = faces.size();
-    std::cout  << "faces:" << facenum << std::endl;
+    //std::cout  << "faces:" << facenum << std::endl;
     
     AABB *faceAABBs = new AABB[facenum];
     for(int i = 0; i < facenum; i++) {
@@ -172,7 +172,7 @@ void Mesh::buildBVH() {
     bvhRoot = new BVHNode();
     size_t maxdepth = bvhRoot->buildAABBTree(faceAABBs, (int)facenum);
     
-    std::cout << "max BVH depth:" << maxdepth << std::endl;
+    //std::cout << "max BVH depth:" << maxdepth << std::endl;
     
     delete [] faceAABBs;
 }

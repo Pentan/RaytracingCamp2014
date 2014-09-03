@@ -61,12 +61,15 @@ public:
     Renderer();
     ~Renderer();
     
-    void render(Scene *scene);
+    void render(Scene *scene, bool isdetach=false);
     
     Config getConfig() const { return config; };
     void setConfig(const Config &conf) { config = conf; };
     FrameBuffer* getFrameBuffer() const { return frameBuffer; };
     
+	double getRenderProgress() const;
+	
+	///
 	void workerJob(int workerId, Scene *scene);
 private:
     FrameBuffer *frameBuffer;
@@ -74,6 +77,7 @@ private:
     
 	std::vector<Context> *renderContexts;
 	
+	int pushedCommandCount;
     RenderCommandQueue *renderQueue;
     std::vector<std::thread> workers;
 	void renderTile(Context *cntx, Scene *scene, FrameBuffer::Tile tile);

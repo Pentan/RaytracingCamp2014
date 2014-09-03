@@ -1,5 +1,8 @@
+#include <iostream>
 #include <cstdio>
 #include <string>
+#include <thread>
+#include <chrono>
 
 #include "r1htypes.h"
 #include "scene.h"
@@ -12,13 +15,24 @@
 #include "scene2013.h"
 //
 
+#ifdef WIN32
+#include <windows.h>
+static double gettimeofday_sec() {
+	return timeGetTime() / 1000.0;
+}
+#else
 #include <sys/time.h>
 static double gettimeofday_sec() {
     struct timeval tv;
     gettimeofday(&tv, NULL);
     return tv.tv_sec + (double)tv.tv_usec * 1e-6;
 }
+#endif
 
+///
+#define kProgressOutIntervalSec	60.0
+
+///
 int main(int argc, char *argv[]) {
 
     using namespace r1h;
@@ -83,17 +97,42 @@ int main(int argc, char *argv[]) {
     printf("scene loaded [%.4f sec]\n", gettimeofday_sec() - startTime);
 
 	if(loaded) {
-		double renderStart = gettimeofday_sec();
 
+		// set tone mapper
+		ToneMapper *mapper = new ToneMapper();
+		
 		// render
-		render->render(scene);
+		double renderStart = gettimeofday_sec();
+		render->render(scene, true); // detach
+		
+		// wait to finish
+		int outcount = 0;
+		double prevouttime = gettimeofday_sec();
+		double progress = 0;
+		do {
+			progress = render->getRenderProgress();
+			
+			printf("rendering : %.2lf %%    \r", progress);
+			fflush(stdout);
+			
+			std::this_thread::sleep_for(std::chrono::seconds(1));
+			
+			double curtime = gettimeofday_sec();
+			if(curtime - prevouttime > kProgressOutIntervalSec) {
+				// progress output
+				char buf[16];
+				sprintf(buf, "%03d.bmp", outcount);
+				mapper->exportBMP(render->getFrameBuffer(), buf);
+				outcount++;
+				prevouttime += kProgressOutIntervalSec;
+			}
+			
+		} while( progress < 100 );
 
-		printf("renderered (%.4f sec) [%.4f sec]\n", gettimeofday_sec() - renderStart, gettimeofday_sec() - startTime);
-
-		// tone map and save
-		FrameBuffer *buffer = render->getFrameBuffer();
-		ToneMapper *mapper = new ToneMapper(buffer);
-		mapper->exportBMP("r1h2014.bmp");
+		printf("render finished (%.4f sec) [%.4f sec]\n", gettimeofday_sec() - renderStart, gettimeofday_sec() - startTime);
+		
+		// final image
+		mapper->exportBMP(render->getFrameBuffer(), "final.bmp");
 
 		printf("saved [%.4f sec]\n", gettimeofday_sec() - startTime);
 		

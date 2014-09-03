@@ -27,7 +27,7 @@ EduptMaterial::EduptMaterial(const Color &col, const Color &emit, const Reflecti
 }
 
 EduptMaterial::~EduptMaterial() {
-	printf("~EduptMaterial:%p\n", this);
+	//printf("~EduptMaterial:%p\n", this);
 	if(bsdf) {
 		delete bsdf;
 	}

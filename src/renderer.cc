@@ -22,15 +22,15 @@ Renderer::Renderer():
 Renderer::~Renderer() {
     if( frameBuffer ) {
         delete frameBuffer;
-        frameBuffer = NULL;
+        frameBuffer = nullptr;
     }
     if( renderQueue ) {
         delete renderQueue;
-        renderQueue = NULL;
+        renderQueue = nullptr;
     }
 }
     
-void Renderer::render(Scene *scene) {
+void Renderer::render(Scene *scene, bool isdetach) {
     // framebuffer
     frameBuffer = new FrameBuffer(config.width, config.height);
     int w = frameBuffer->getWidth();
@@ -41,11 +41,14 @@ void Renderer::render(Scene *scene) {
 	
     // queue
     renderQueue = new RenderCommandQueue();
+	
     // push tile command
+	pushedCommandCount = 0;
     for(int iy = 0; iy < h; iy += config.tileSize) {
         for(int ix = 0; ix < w; ix += config.tileSize) {
             FrameBuffer::Tile tile = frameBuffer->makeTile(ix, iy, config.tileSize, config.tileSize);
             renderQueue->pushTileCommand(tile);
+			++pushedCommandCount;
         }
     }
     
@@ -69,10 +72,16 @@ void Renderer::render(Scene *scene) {
 		workers[i] = std::thread(startWorker, this, i, scene);
 	}
 	
-	for(int i = 0; i < numthreads; ++i) {
-		workers[i].join();
+	if(isdetach) {
+		for(int i = 0; i < numthreads; ++i) {
+			workers[i].detach();
+		}
 	}
-	
+	else {
+		for(int i = 0; i < numthreads; ++i) {
+			workers[i].join();
+		}
+	}
 	/*
     //+++++
 	{
@@ -82,9 +91,15 @@ void Renderer::render(Scene *scene) {
     //+++++
     */
 	
-    // start render
-    printf("render!\n");
+    // finish render
+    //printf("render!\n");
 };
+
+double Renderer::getRenderProgress() const {
+	return ((pushedCommandCount - (int)renderQueue->getRemainCommandCount()) * 100.0) / pushedCommandCount;
+}
+
+
 
 void Renderer::workerJob(int workerId, Scene *scene) {
     // get tile and render!
@@ -115,8 +130,8 @@ void Renderer::workerJob(int workerId, Scene *scene) {
 }
 
 void Renderer::renderTile(Context *cntx, Scene *scene, FrameBuffer::Tile tile) {
-	std::cout << "[" << std::this_thread::get_id() << "]";
-	printf("render tile (x(%d, %d),y(%d, %d))(size(%d, %d))\n", tile.startx, tile.endx, tile.starty, tile.endy, tile.endx - tile.startx, tile.endy - tile.starty);
+	//std::cout << "[" << std::this_thread::get_id() << "]";
+	//printf("render tile (x(%d, %d),y(%d, %d))(size(%d, %d))\n", tile.startx, tile.endx, tile.starty, tile.endy, tile.endx - tile.startx, tile.endy - tile.starty);
     
     int ss = config.subSamples;
     R1hFPType ssrate = 1.0 / ss;

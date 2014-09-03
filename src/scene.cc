@@ -31,7 +31,7 @@ Scene::~Scene() {
     if(objectBVH) {
         //objectBVH->releaseAll();
         delete objectBVH;
-        objectBVH = NULL;
+        objectBVH = nullptr;
     }
 }
 
@@ -66,7 +66,7 @@ int Scene::addObject(SceneObjectRef objref) {
 
 SceneObject* Scene::getObject(int objid) {
 	if(objid < 0 || objid >= sceneObjects.size()) {
-		return NULL;
+		return nullptr;
 	}
 	return sceneObjects[objid].get();
 }
@@ -112,7 +112,7 @@ void Scene::prepareRendering() {
 	}
 	objectBVH = new BVHNode();
 	int maxdepth = objectBVH->buildAABBTree(aabbvec.data(), (int)aabbvec.size());
-	printf("%ld objects. BVH max depth: %d\n", sceneObjects.size(), maxdepth);
+	//printf("%ld objects. BVH max depth: %d\n", sceneObjects.size(), maxdepth);
 }
 
 Color Scene::radiance(Renderer::Context *cntx, const Ray &ray) {

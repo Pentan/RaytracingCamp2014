@@ -31,6 +31,8 @@ private:
         
         void clear();
         void addColor(const Color &col);
+		
+		Pixel();
     } *buffer;
     
     int width;

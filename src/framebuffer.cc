@@ -53,6 +53,12 @@ void FrameBuffer::accumulate(const int x, const int y, const Color& col) {
     pixel.addColor(col);
 }
 
+/////
+FrameBuffer::Pixel::Pixel():
+	color(0.0), sampleCount(0)
+{
+}
+
 void FrameBuffer::Pixel::clear() {
     color.set(0.0, 0.0, 0.0);
     sampleCount = 0;

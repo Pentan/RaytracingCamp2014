@@ -4,11 +4,10 @@
 using namespace r1h;
 
 /// pass-through tone mapper
-ToneMapper::ToneMapper(FrameBuffer *buffer) : AbstractToneMapper()
+ToneMapper::ToneMapper() : AbstractToneMapper()
 {
-    framebuffer = buffer;
 };
 
 ToneMapper::~ToneMapper() {
-    printf("tone mapper destructed\n");
+    //printf("tone mapper destructed\n");
 };

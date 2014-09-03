@@ -184,7 +184,7 @@ void SimpleObjLoader::foundFace(const ParameterType pt, const std::vector<FaceIn
 // endof .mtl or .obj
 void SimpleObjLoader::endFile(std::string fullpath) {
 	
-	std::cout << fullpath << " ended" << std::endl;
+	//std::cout << fullpath << " ended" << std::endl;
 	
 	if(fullpath.substr(fullpath.length() - 3) == "obj") {
 		const R1hFPType fovdeg = 60.0;
@@ -198,7 +198,7 @@ void SimpleObjLoader::endFile(std::string fullpath) {
 		R1hFPType d = aabbsize.y * 0.5 / tan(fovdeg * 0.5 * kPI / 180.0);
 		
 		int objcount = scene->getObjectsCount();
-		printf("%d objects loaded\n", objcount);
+		//printf("%d objects loaded\n", objcount);
 		
 		// if normals are not contained
 		for(int i = 0; i < objcount; i++) {

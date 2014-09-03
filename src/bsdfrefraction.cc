@@ -3,6 +3,10 @@
 
 using namespace r1h;
 
+RefractionBSDF::RefractionBSDF(const R1hFPType iior): ior(iior)
+{
+}
+
 RefractionBSDF::~RefractionBSDF()
 {
 }
@@ -14,7 +18,7 @@ void RefractionBSDF::makeNextRays(const Ray &ray, const Intersection &hp, const 
 	
 	// Snell's law
 	const double nc = 1.0;
-	const double nt = kIor;
+	const double nt = ior;
 	const double nnt = into ? (nc / nt) : (nt / nc);
 	const double ddn = Vector3::dot(ray.direction, orienting_normal);
 	const double cos2t = 1.0 - nnt * nnt * (1.0 - ddn * ddn);
@@ -67,3 +71,5 @@ void RefractionBSDF::makeNextRays(const Ray &ray, const Intersection &hp, const 
 		outvecs->push_back(trray);
 	}
 }
+
+

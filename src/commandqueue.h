@@ -17,6 +17,7 @@ public:
         kNoOp   = 0,
         kTile,
         kSleep,
+		kYield,
         kFinish
     };
     
@@ -33,6 +34,9 @@ public:
     void pushSleepCommand(unsigned long usec);
     Command popCommand();
     
+	bool isQueueEmpty();
+	size_t getRemainCommandCount();
+	
 private:
     std::queue<Command> cmdQueue;
     std::mutex cmdMutex;

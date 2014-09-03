@@ -7,10 +7,14 @@ namespace r1h {
 
 class RefractionBSDF : public BSDF {
 public:
-	const double kIor = 1.5; // ior of REFLECTION_TYPE_REFRACTION
-
+	RefractionBSDF(const R1hFPType iior=1.5);
     ~RefractionBSDF();
     void makeNextRays(const Ray &ray, const Intersection &hp, const int depth, Random *rnd, std::vector<Ray> *outvecs);
+	
+	void setIor(R1hFPType nior);
+	
+private:
+	R1hFPType ior;
 };
 
 }

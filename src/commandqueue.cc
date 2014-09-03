@@ -34,3 +34,11 @@ RenderCommandQueue::Command RenderCommandQueue::popCommand() {
         return cmd;
     }
 }
+
+bool RenderCommandQueue::isQueueEmpty() {
+	return (getRemainCommandCount() <= 0);
+}
+
+size_t RenderCommandQueue::getRemainCommandCount() {
+	return cmdQueue.size();
+}

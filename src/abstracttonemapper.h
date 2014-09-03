@@ -13,16 +13,15 @@ class FrameBuffer;
 class AbstractToneMapper
 {
 public:
-    AbstractToneMapper() : framebuffer(NULL), gamma(2.2) {};
-    virtual ~AbstractToneMapper() { printf("abstract tone mapper destructed\n"); };
+    AbstractToneMapper() : gamma(2.2) {};
+    virtual ~AbstractToneMapper() { /*printf("abstract tone mapper destructed\n");*/ };
     
     void setGamma(const double g) { gamma = g; };
     
-    void exportBMP(const std::string outpath);
-    void exportTGA(const std::string outpath);
+    void exportBMP(const FrameBuffer *frmbuf, const std::string outpath);
+    void exportTGA(const FrameBuffer *frmbuf, const std::string outpath);
     
 protected:
-    FrameBuffer *framebuffer;
     double gamma;
     
     virtual Color tonemap(const Color &col) { return col; };
