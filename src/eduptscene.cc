@@ -20,6 +20,9 @@ EduptMaterial::EduptMaterial(const Color &col, const Color &emit, const Reflecti
 		case REFRACTION:
 			bsdf = new RefractionBSDF();
 			break;
+        case PAINT:
+            bsdf = new PaintBSDF();
+			break;
 		case BACKGROUND:
 			bsdf = nullptr;
 			break;
@@ -57,16 +60,29 @@ bool EduptScene::load(Scene *scene, double aspect) {
 		Color diffuse;
 		EduptMaterial::ReflectionType type;
 	} spheres[] = {
-//		{1e5, Vector3( 1e5 + 1.0, 40.8, 81.6),    Color(), Color(0.75, 0.25, 0.25), EduptMaterial::DIFFUSE},
-//		{1e5, Vector3(-1e5 + 99.0, 40.8, 81.6),   Color(), Color(0.25, 0.25, 0.75), EduptMaterial::DIFFUSE},
-//		{1e5, Vector3(50.0, 40.8, 1e5),           Color(), Color(0.75, 0.75, 0.75), EduptMaterial::DIFFUSE},
-//		{1e5, Vector3(50.0, 40.8, 1e5 + 250.0),   Color(), Color(0.0),                 EduptMaterial::DIFFUSE},
-//		{1e5, Vector3(50.0, 1e5, 81.6),           Color(), Color(0.75, 0.75, 0.75), EduptMaterial::DIFFUSE},
-//		{1e5, Vector3(50.0, 1e5 + 81.6, 81.6),    Color(), Color(0.75, 0.75, 0.75), EduptMaterial::DIFFUSE},
+        /*
+		{1e5, Vector3( 1e5 + 1.0, 40.8, 81.6),    Color(), Color(0.75, 0.25, 0.25), EduptMaterial::DIFFUSE},
+		{1e5, Vector3(-1e5 + 99.0, 40.8, 81.6),   Color(), Color(0.25, 0.25, 0.75), EduptMaterial::DIFFUSE},
+		{1e5, Vector3(50.0, 40.8, 1e5),           Color(), Color(0.75, 0.75, 0.75), EduptMaterial::DIFFUSE},
+		{1e5, Vector3(50.0, 40.8, 1e5 + 250.0),   Color(), Color(0.0),                 EduptMaterial::DIFFUSE},
+		{1e5, Vector3(50.0, 1e5, 81.6),           Color(), Color(0.75, 0.75, 0.75), EduptMaterial::DIFFUSE},
+		{1e5, Vector3(50.0, 1e5 + 81.6, 81.6),    Color(), Color(0.75, 0.75, 0.75), EduptMaterial::DIFFUSE},
 		{20.0, Vector3(65.0, 20.0, 20.0),         Color(), Color(0.25, 0.75, 0.25), EduptMaterial::DIFFUSE},
 		{16.5, Vector3(27.0, 16.5, 47.0),         Color(), Color(0.99, 0.99, 0.99), EduptMaterial::SPECULAR},
 		{16.5, Vector3(77.0, 16.5, 78.0),         Color(), Color(0.99, 0.99, 0.99), EduptMaterial::REFRACTION},
 		{15.0, Vector3(50.0, 90.0, 81.6),         Color(36.0, 36.0, 36.0), Color(), EduptMaterial::DIFFUSE}
+         */
+        {1e5, Vector3( 1e5 + 1.0, 40.8, 81.6),    Color(), Color(0.75, 0.25, 0.25), EduptMaterial::DIFFUSE},
+		{1e5, Vector3(-1e5 + 99.0, 40.8, 81.6),   Color(), Color(0.25, 0.25, 0.75), EduptMaterial::DIFFUSE},
+		{1e5, Vector3(50.0, 40.8, 1e5),           Color(), Color(0.75, 0.75, 0.75), EduptMaterial::DIFFUSE},
+		{1e5, Vector3(50.0, 40.8, 1e5 + 250.0),   Color(), Color(0.0),                 EduptMaterial::DIFFUSE},
+		{1e5, Vector3(50.0, 1e5, 81.6),           Color(), Color(0.75, 0.75, 0.75), EduptMaterial::DIFFUSE},
+		{1e5, Vector3(50.0, 1e5 + 81.6, 81.6),    Color(), Color(0.75, 0.75, 0.75), EduptMaterial::DIFFUSE},
+		{20.0, Vector3(65.0, 20.0, 20.0),         Color(), Color(0.25, 0.75, 0.25), EduptMaterial::DIFFUSE},
+		{16.5, Vector3(27.0, 16.5, 47.0),         Color(), Color(0.75, 0.75, 0.25), EduptMaterial::PAINT},
+		{16.5, Vector3(77.0, 16.5, 78.0),         Color(), Color(0.25, 0.75, 0.75), EduptMaterial::PAINT},
+		{15.0, Vector3(50.0, 90.0, 81.6),         Color(36.0, 36.0, 36.0), Color(), EduptMaterial::DIFFUSE}
+        
 	};
 	int numspheres = sizeof(spheres) /sizeof(SphereDef);
 	

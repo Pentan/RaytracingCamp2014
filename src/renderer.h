@@ -39,6 +39,12 @@ public:
         {}
     };
 	
+    enum RenderState {
+        kAwake,
+        kWorking,
+        kDone
+    };
+    
 	struct Context {
 		Random random;
 		std::vector<Ray> rayVector1;
@@ -46,8 +52,10 @@ public:
 		std::vector<Ray> workVector;
 		
 		const Config *config;
-		
-		Context() : random(0) {}
+		int state;
+        double tileProgress;
+        
+		Context() : random(0), state(kAwake) {}
 		void init(const unsigned int seed, const Config *conf) {
 			random.setSeed(seed);
 			rayVector1.reserve(128);
@@ -68,7 +76,12 @@ public:
     FrameBuffer* getFrameBuffer() const { return frameBuffer; };
     
 	double getRenderProgress() const;
+    
+    size_t getRecderContextCount() const;
+    const Context* getRenderContext(int cntxid) const;
 	
+    bool isFinished() const;
+    
 	///
 	void workerJob(int workerId, Scene *scene);
 private:

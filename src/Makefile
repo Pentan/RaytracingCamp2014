@@ -22,6 +22,7 @@ OBJS = \
     bsdfdiffuse.o \
     bsdfrefraction.o \
     bsdfspecular.o \
+    bsdfpaint.o \
     bvhnode.o \
     camera.o \
     commandqueue.o \

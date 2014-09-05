@@ -37,6 +37,8 @@ private:
 	
 	R1hFPType focusDistance;
 	R1hFPType apertureRadius;
+	
+	bool apertureTest(R1hFPType u, R1hFPType v) const;
 };
 
 typedef std::shared_ptr<Camera> CameraRef;

@@ -47,7 +47,8 @@ int main(int argc, char *argv[]) {
     renderConf.height = 720 / 4;
 	renderConf.samples = 16;
 	renderConf.subSamples = 2;
-	renderConf.tileSize = 64;
+	renderConf.tileSize = 32;
+    renderConf.maxDepth = 16;
 	
 	// parse render config from arguments?
 	
@@ -85,8 +86,8 @@ int main(int argc, char *argv[]) {
 		//setupTestCubeScene(*scene); //+++++
 		
 		//+++++ edupt cornel box scene +++++
-		//EduptScene::load(scene, (double)renderConf.width / renderConf.height);
-		EduptScene::load2(scene, (double)renderConf.width / renderConf.height);
+		EduptScene::load(scene, (double)renderConf.width / renderConf.height);
+		//EduptScene::load2(scene, (double)renderConf.width / renderConf.height);
 		//+++++
 		//+++++ Render Camp 2013 scene +++++
 		//setupMainScene2013(*scene);
@@ -108,12 +109,11 @@ int main(int argc, char *argv[]) {
 		// wait to finish
 		int outcount = 0;
 		double prevouttime = gettimeofday_sec();
-		double progress = 0;
+        
+        int numcntx = (int)render->getRecderContextCount();
+        
 		do {
-			progress = render->getRenderProgress();
-			
-			printf("rendering : %.2lf %%    \r", progress);
-			fflush(stdout);
+			double progress = render->getRenderProgress();
 			
 			std::this_thread::sleep_for(std::chrono::seconds(1));
 			
@@ -123,16 +123,27 @@ int main(int argc, char *argv[]) {
 				char buf[16];
 				sprintf(buf, "%03d.bmp", outcount);
 				mapper->exportBMP(render->getFrameBuffer(), buf);
+                printf("progress image %s saved\n", buf);
 				outcount++;
 				prevouttime += kProgressOutIntervalSec;
 			}
 			
-		} while( progress < 100 );
+			printf("%.2lf%%:", progress);
+            for(int i = 0; i < numcntx; i++) {
+                const Renderer::Context *cntx = render->getRenderContext(i);
+                printf("[%d:%.1lf]", i, cntx->tileProgress * 100.0);
+            }
+            printf("    \r");
+            fflush(stdout);
+            
+		} while( !render->isFinished() );
 
 		printf("render finished (%.4f sec) [%.4f sec]\n", gettimeofday_sec() - renderStart, gettimeofday_sec() - startTime);
 		
 		// final image
-		mapper->exportBMP(render->getFrameBuffer(), "final.bmp");
+        const char *finalname = "final.bmp";
+		mapper->exportBMP(render->getFrameBuffer(), finalname);
+        printf("%s saved\n", finalname);
 
 		printf("saved [%.4f sec]\n", gettimeofday_sec() - startTime);
 		

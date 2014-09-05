@@ -6,6 +6,7 @@
 #include "bsdfdiffuse.h"
 #include "bsdfspecular.h"
 #include "bsdfrefraction.h"
+#include "bsdfpaint.h"
 #include "scene.h"
 
 namespace r1h {
@@ -17,6 +18,7 @@ public:
 		DIFFUSE,
 		SPECULAR,
 		REFRACTION,
+        PAINT,
 		BACKGROUND
 	};
 	

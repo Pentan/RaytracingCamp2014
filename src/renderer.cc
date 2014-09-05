@@ -14,7 +14,8 @@ using namespace r1h;
 Renderer::Renderer():
     frameBuffer(0),
     config(),
-    renderQueue(0)
+    renderQueue(0),
+    renderContexts(0)
 {
     // alloc workers
 }
@@ -27,6 +28,10 @@ Renderer::~Renderer() {
     if( renderQueue ) {
         delete renderQueue;
         renderQueue = nullptr;
+    }
+    if(renderContexts) {
+        delete renderContexts;
+        renderContexts = nullptr;
     }
 }
     
@@ -59,7 +64,7 @@ void Renderer::render(Scene *scene, bool isdetach) {
         numthreads = config.defaultThreads;
     }
     workers.resize(numthreads);
-	printf("%d threads\n", numthreads);
+	//printf("%d threads\n", numthreads);
     
 	// init contexts and workers
 	renderContexts = new std::vector<Context>(numthreads);
@@ -99,15 +104,29 @@ double Renderer::getRenderProgress() const {
 	return ((pushedCommandCount - (int)renderQueue->getRemainCommandCount()) * 100.0) / pushedCommandCount;
 }
 
+size_t Renderer::getRecderContextCount() const {
+    return renderContexts->size();
+}
 
+const Renderer::Context* Renderer::getRenderContext(int cntxid) const {
+    return &renderContexts->at(cntxid);
+}
+
+bool Renderer::isFinished() const {
+    bool isdone = true;
+    for(size_t i = 0; i < renderContexts->size(); i++) {
+        isdone &= renderContexts->at(i).state == kDone;
+    }
+    return isdone;
+}
 
 void Renderer::workerJob(int workerId, Scene *scene) {
     // get tile and render!
     
 	Context *cntx = &renderContexts->at(workerId);
 	
-    bool working = true;
-    while(working) {
+    cntx->state = kWorking;
+    while(cntx->state == kWorking) {
         RenderCommandQueue::Command cmd = renderQueue->popCommand();
         
         switch(cmd.type) {   
@@ -120,11 +139,11 @@ void Renderer::workerJob(int workerId, Scene *scene) {
                 std::this_thread::sleep_for(std::chrono::microseconds(cmd.usec));
                 break;
             case RenderCommandQueue::kFinish:
-                working = false;
+                cntx->state = kDone;
                 break;
             default:
                 printf("not handled render command 0x%x\n", cmd.type);
-                working = false;
+                cntx->state = kDone;
         }
     }
 }
@@ -139,6 +158,10 @@ void Renderer::renderTile(Context *cntx, Scene *scene, FrameBuffer::Tile tile) {
     R1hFPType divh = 1.0 / config.height;
     
     Camera *camera = scene->getCamera();
+    
+    int numpixels = (tile.endx - tile.startx) * (tile.endy - tile.starty);
+    int donepixel = 0;
+    cntx->tileProgress = 0.0;
     
     for(int iy = tile.starty; iy < tile.endy; iy++) {
         for(int ix = tile.startx; ix < tile.endx; ix++) {
@@ -156,6 +179,8 @@ void Renderer::renderTile(Context *cntx, Scene *scene, FrameBuffer::Tile tile) {
                     }
                 }
             }
+            ++donepixel;
+            cntx->tileProgress = double(donepixel) / numpixels;
         }
     }
 }

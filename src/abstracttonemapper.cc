@@ -36,7 +36,7 @@ inline void AbstractToneMapper::put32(const unsigned long l, std::ofstream &ofs)
 }
 
 void AbstractToneMapper::exportBMP(const FrameBuffer *frmbuf, const std::string outpath) {
-    printf("export %s\n", outpath.c_str());
+    //printf("export %s\n", outpath.c_str());
     
     int width = frmbuf->getWidth();
     int height = frmbuf->getHeight();
@@ -92,11 +92,11 @@ void AbstractToneMapper::exportBMP(const FrameBuffer *frmbuf, const std::string 
     }
     
     ofs.close();
-    std::cerr << outpath << " saved" << std::endl;
+    //std::cerr << outpath << " saved" << std::endl;
 }
 
 void AbstractToneMapper::exportTGA(const FrameBuffer *frmbuf, const std::string outpath) {
-    printf("export %s\n", outpath.c_str());
+    //printf("export %s\n", outpath.c_str());
     
     std::ofstream ofs(outpath, std::ios::out | std::ios::binary);
     
@@ -165,5 +165,5 @@ void AbstractToneMapper::exportTGA(const FrameBuffer *frmbuf, const std::string 
     
     ofs.close();
     /////
-    std::cerr << outpath << " saved" << std::endl;
+    //std::cerr << outpath << " saved" << std::endl;
 }

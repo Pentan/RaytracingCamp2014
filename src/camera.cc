@@ -59,7 +59,7 @@ Ray Camera::getRay(const double tx, const double ty, Random *rnd) const {
 		do {
 			rx = rnd->next11();
 			ry = rnd->next11();
-		} while(rx * rx + ty * ty > 1.0);
+		} while(apertureTest(rx, ry));
 		
 		rx *= apertureRadius;
 		ry *= apertureRadius;
@@ -75,4 +75,8 @@ Ray Camera::getRay(const double tx, const double ty, Random *rnd) const {
 	
     dir.normalize();
     return Ray(eyep, dir);
+}
+
+bool Camera::apertureTest(R1hFPType u, R1hFPType v) const {
+	return (u * u + v * v) < 1.0;
 }
