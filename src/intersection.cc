@@ -1,4 +1,4 @@
-
+﻿
 #include "intersection.h"
 
 using namespace r1h;

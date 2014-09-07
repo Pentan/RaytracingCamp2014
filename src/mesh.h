@@ -1,4 +1,4 @@
-/*
+﻿/*
 ### Mesh data format ###
 vertices[] = {Vector3, ...}
 normals[] = {Vector3, ...}

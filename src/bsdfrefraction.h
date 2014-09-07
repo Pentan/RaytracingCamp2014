@@ -1,4 +1,4 @@
-#ifndef R1H_BSDFREFRACTION_H
+﻿#ifndef R1H_BSDFREFRACTION_H
 #define R1H_BSDFREFRACTION_H
 
 #include "bsdf.h"

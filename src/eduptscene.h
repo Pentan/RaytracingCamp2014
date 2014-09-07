@@ -1,4 +1,4 @@
-#ifndef R1H_EDUPTSCENE_H
+﻿#ifndef R1H_EDUPTSCENE_H
 #define R1H_EDUPTSCENE_H
 
 #include "material.h"

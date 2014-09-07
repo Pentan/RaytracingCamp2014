@@ -1,4 +1,4 @@
-#ifndef R1H_CAMERA_H
+﻿#ifndef R1H_CAMERA_H
 #define R1H_CAMERA_H
 
 #include <memory>

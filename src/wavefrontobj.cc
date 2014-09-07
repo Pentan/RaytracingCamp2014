@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <fstream>
 #include <sstream>
 #include <cstring>
@@ -69,7 +69,8 @@ WavefrontObj::WavefrontObj(std::string path) {
     ptMap["usemtl"] =   ParameterDesc(OBJ_usemtl, kStringValue);
     ptMap["newmtl"] =   ParameterDesc(MTL_newmtl, kStringValue);
     ptMap["map_Kd"] =   ParameterDesc(MTL_map_Kd, kStringValue);
-    
+
+	ptMap["l"] =		ParameterDesc(OBJ_l, kLineValue);
     ptMap["f"] =        ParameterDesc(OBJ_f, kFaceValue);
     
     ptMap["illum"] =    ParameterDesc(MTL_illum, kIntegerValue);
@@ -184,7 +185,15 @@ bool WavefrontObj::loadFile(std::string fpath) {
                         sstrm >> i;
                         this->foundInteger(pd.paramType, i);
                     }
-                    break;
+					break;
+				case kLineValue: {
+						// line
+						int v0, v1;
+						sstrm >> v0;
+						sstrm >> v1;
+						this->foundLine(pd.paramType, v0, v1);
+					}
+					break;
                 case kFaceValue: {
                         // face
                         finfovec.clear();

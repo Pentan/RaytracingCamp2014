@@ -23,6 +23,7 @@ OBJS = \
     bsdfrefraction.o \
     bsdfspecular.o \
     bsdfpaint.o \
+    bsdftranslucent.o \
     bvhnode.o \
     camera.o \
     commandqueue.o \
@@ -34,6 +35,7 @@ OBJS = \
     scene.o \
     scenesupport.o \
     scene2013.o \
+    scene2014.o \
     sceneobject.o \
     sphere.o \
     texture.o \
@@ -43,16 +45,19 @@ OBJS = \
 TESTOBJ = main.o
 MAINOBJ = main.o
 
-MAINTARGET = r1h14fnl
-TESTTARGET = r1h1401
+#MAINEXE = ray&bow-
+MAINEXE = raynbow-
+
+MAINTARGET = raynbowdash
+TESTTARGET = r30m
 
 # main
 $(MAINTARGET) : $(MAINOBJ) $(OBJS)
-	$(CC) -o $(MAINTARGET) $(MAINOBJ) $(OBJS) $(LDFLAGS)
+	$(CC) -o "$(MAINEXE)" $(MAINOBJ) $(OBJS) $(LDFLAGS)
 
 # test
 $(TESTTARGET) : $(TESTOBJ) $(OBJS)
-	$(CC) -o $(TESTTARGET) $(TESTOBJ) $(OBJS) $(LDFLAGS)
+	$(CC) -o "$(TESTTARGET)" $(TESTOBJ) $(OBJS) $(LDFLAGS)
 
 clean :
-	rm -f $(OBJS) $(TESTOBJ) $(MAINOBJ) $(MAINTARGET) $(TESTTARGET)
+	rm -f $(OBJS) $(TESTOBJ) $(MAINOBJ) "$(MAINEXE)" "$(TESTTARGET)"

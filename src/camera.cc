@@ -1,4 +1,4 @@
-
+﻿
 #include <iostream>
 #include <cmath>
 #include "camera.h"
@@ -59,7 +59,7 @@ Ray Camera::getRay(const double tx, const double ty, Random *rnd) const {
 		do {
 			rx = rnd->next11();
 			ry = rnd->next11();
-		} while(apertureTest(rx, ry));
+		} while(!apertureTest(rx, ry));
 		
 		rx *= apertureRadius;
 		ry *= apertureRadius;
@@ -79,4 +79,5 @@ Ray Camera::getRay(const double tx, const double ty, Random *rnd) const {
 
 bool Camera::apertureTest(R1hFPType u, R1hFPType v) const {
 	return (u * u + v * v) < 1.0;
+	//return (fabs(u) + fabs(v)) < 1.0;
 }

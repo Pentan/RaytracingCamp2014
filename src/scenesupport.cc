@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 
 #include "r1htypes.h"
 #include "scenesupport.h"
@@ -99,12 +99,13 @@ void SimpleObjLoader::foundString(const ParameterType pt, const std::string &str
 			break;
 		case OBJ_o: // FIXME?
 		case OBJ_g:
-			//std::cout << "new object : " << str << std::endl;
+			//std::cout << tmpObjs.size() <<  ":object : " << str << std::endl;
 			vOffset = curNumVs;
 			vnOffset = curNumVNs;
 			vtOffset = curNumVTs;
 			
 			curObj = new SceneObject();
+			curObj->setName(str);
 			curMatId = curObj->addMaterial(defaultMat); // push default material
 			curMesh = new Mesh();
 			// atribute container for vt
@@ -115,7 +116,8 @@ void SimpleObjLoader::foundString(const ParameterType pt, const std::string &str
 			curMesh->addAttribute(0, Vector3(0.0));
 			
 			curObj->setGeometry(GeometryRef(curMesh));
-			scene->addObject(SceneObjectRef(curObj));
+			//scene->addObject(SceneObjectRef(curObj));
+			tmpObjs.push_back(SceneObjectRef(curObj));
 			break;
 		case OBJ_s:			break;
 		case OBJ_mtllib:
@@ -139,6 +141,15 @@ void SimpleObjLoader::foundInteger(const ParameterType pt, const int i) {
 			break;
 		default:
 			printf("unknown integer value %d found in material\n", i);
+	}
+}
+// l
+void SimpleObjLoader::foundLine(const ParameterType pt, const int v0, const int v1) {
+	switch (pt) {
+	case OBJ_l:
+		break;
+	default:
+		printf("unknown line value %d,%d found in obj\n", v0, v1);
 	}
 }
 // f
@@ -197,17 +208,26 @@ void SimpleObjLoader::endFile(std::string fullpath) {
 		Vector3 aabbsize = sceneAABB.max - sceneAABB.min;
 		R1hFPType d = aabbsize.y * 0.5 / tan(fovdeg * 0.5 * kPI / 180.0);
 		
-		int objcount = scene->getObjectsCount();
-		//printf("%d objects loaded\n", objcount);
+		//int objcount = scene->getObjectsCount();
+		int objcount = tmpObjs.size();
+		printf("%d objects loaded\n", objcount);
 		
 		// if normals are not contained
 		for(int i = 0; i < objcount; i++) {
-			SceneObject *obj = scene->getObject(i);
+			//SceneObject *obj = scene->getObject(i);
+			SceneObject *obj = tmpObjs[i].get();
 			Mesh *mesh = dynamic_cast<Mesh*>(obj->getGeometry());
+			if (mesh->getFaceCount() <= 0) {
+				//printf("no face. skip this\n");
+				continue;
+			}
 			if(mesh->getNormalCount() <= 1) {
 				mesh->calcSmoothNormals();
 			}
+			//printf("[%d]v:%d,n:%d,f:%d\n", i, mesh->getVertexCount(), mesh->getNormalCount(), mesh->getFaceCount());
 			//mesh->dumpFaces();
+
+			scene->addObject(tmpObjs[i]);
 		}
 		
 		sceneAABB.updateCentroid();

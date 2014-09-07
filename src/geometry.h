@@ -1,4 +1,4 @@
-#ifndef R1H_GEOMETRY_H
+﻿#ifndef R1H_GEOMETRY_H
 #define R1H_GEOMETRY_H
 
 /*

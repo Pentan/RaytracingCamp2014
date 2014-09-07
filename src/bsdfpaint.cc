@@ -1,4 +1,4 @@
-
+﻿
 #include "bsdfpaint.h"
 
 using namespace r1h;

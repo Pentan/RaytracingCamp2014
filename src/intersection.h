@@ -1,4 +1,4 @@
-#ifndef R1H_INTERSECTION_H
+﻿#ifndef R1H_INTERSECTION_H
 #define R1H_INTERSECTION_H
 
 #include <vector>

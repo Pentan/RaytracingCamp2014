@@ -1,4 +1,4 @@
-#ifndef R1H_AABB_H
+﻿#ifndef R1H_AABB_H
 #define R1H_AABB_H
 
 #include <cfloat>

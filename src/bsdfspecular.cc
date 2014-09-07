@@ -1,4 +1,4 @@
-
+﻿
 #include "bsdfspecular.h"
 
 using namespace r1h;

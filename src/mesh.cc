@@ -1,4 +1,4 @@
-
+﻿
 #include <iostream>
 #include <algorithm>
 #include "mesh.h"
@@ -160,21 +160,25 @@ void Mesh::buildBVH() {
     size_t facenum = faces.size();
     //std::cout  << "faces:" << facenum << std::endl;
     
-    AABB *faceAABBs = new AABB[facenum];
-    for(int i = 0; i < facenum; i++) {
-        Face &fc = faces[i];
-        AABB &ab = faceAABBs[i];
-        ab.expand(vertices[fc.v0]);
-        ab.expand(vertices[fc.v1]);
-        ab.expand(vertices[fc.v2]);
-        ab.dataId = i;
-    }
-    bvhRoot = new BVHNode();
-    size_t maxdepth = bvhRoot->buildAABBTree(faceAABBs, (int)facenum);
-    
-    //std::cout << "max BVH depth:" << maxdepth << std::endl;
-    
-    delete [] faceAABBs;
+	if (facenum == 0) {
+		bvhRoot = new BVHNode();
+	}
+	else {
+		AABB *faceAABBs = new AABB[facenum];
+		for (int i = 0; i < facenum; i++) {
+			Face &fc = faces[i];
+			AABB &ab = faceAABBs[i];
+			ab.expand(vertices[fc.v0]);
+			ab.expand(vertices[fc.v1]);
+			ab.expand(vertices[fc.v2]);
+			ab.dataId = i;
+		}
+		bvhRoot = new BVHNode();
+		size_t maxdepth = bvhRoot->buildAABBTree(faceAABBs, (int)facenum);
+		//std::cout << "max BVH depth:" << maxdepth << std::endl;
+
+		delete[] faceAABBs;
+	}
 }
 
 AABB Mesh::getAABB() const {
@@ -183,6 +187,10 @@ AABB Mesh::getAABB() const {
 
 //bool Mesh::triangleIntersect(const int faceid, const Ray &ray, Intersection *intersect) const {
 bool Mesh::isIntersectLeaf(int dataid, const Ray &ray, Intersection *intersect) const {
+	if (faces.size() <= 0) {
+		return false;
+	}
+
     const Face &face = faces[dataid];
     const Vector3 &v0 = vertices[face.v0];
     const Vector3 &v1 = vertices[face.v1];

@@ -1,4 +1,4 @@
-#ifndef R1H_RAY_H
+﻿#ifndef R1H_RAY_H
 #define R1H_RAY_H
 
 #include "r1htypes.h"

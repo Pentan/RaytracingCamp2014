@@ -1,4 +1,4 @@
-
+﻿
 #include "abstracttonemapper.h"
 #include <iostream>
 #include <cstdio>

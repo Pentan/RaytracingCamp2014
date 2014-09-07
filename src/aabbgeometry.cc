@@ -1,4 +1,4 @@
-
+﻿
 #include "aabbgeometry.h"
 
 using namespace r1h;

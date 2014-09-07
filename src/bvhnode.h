@@ -1,4 +1,4 @@
-#ifndef R1H_BVHNODE_H
+﻿#ifndef R1H_BVHNODE_H
 #define R1H_BVHNODE_H
 
 #include "r1htypes.h"

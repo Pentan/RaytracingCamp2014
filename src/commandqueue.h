@@ -1,4 +1,4 @@
-#ifndef R1H_COMMANDQUEUE_H
+﻿#ifndef R1H_COMMANDQUEUE_H
 #define R1H_COMMANDQUEUE_H
 
 #include <queue>

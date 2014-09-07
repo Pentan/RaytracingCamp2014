@@ -1,4 +1,4 @@
-#ifndef R1H_ABSTRACTTONEMAPPER_H
+﻿#ifndef R1H_ABSTRACTTONEMAPPER_H
 #define R1H_ABSTRACTTONEMAPPER_H
 
 #include <string>

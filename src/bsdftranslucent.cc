@@ -1,14 +1,14 @@
-﻿
-#include "bsdfdiffuse.h"
+
+#include "bsdftranslucent.h"
 
 using namespace r1h;
 
-DiffuseBSDF::~DiffuseBSDF() {
+TranslucentBSDF::~TranslucentBSDF() {
 }
 
-void DiffuseBSDF::makeNextRays(const Ray &ray, const Intersection &hp, const int depth, Random *rnd, std::vector<Ray> *outvecs) {
+void TranslucentBSDF::makeNextRays(const Ray &ray, const Intersection &hp, const int depth, Random *rnd, std::vector<Ray> *outvecs) {
 	Vector3 w, u, v;
-	w = hp.orientingNormal(ray);
+	w = hp.orientingNormal(ray) * -1.0;
 	
 	if(fabs(w.x_) > kEPS) {
 		u = Vector3::normalized(Vector3::cross(Vector3(0.0, 1.0, 0.0), w));

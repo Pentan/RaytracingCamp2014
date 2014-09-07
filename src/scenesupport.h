@@ -1,4 +1,4 @@
-
+﻿
 #ifndef R1H_SCENESUPPORT_H
 #define R1H_SCENESUPPORT_H
 
@@ -44,6 +44,8 @@ public:
 	void foundString(const ParameterType pt, const std::string &str);
 	// illum
 	void foundInteger(const ParameterType pt, const int i);
+	// l
+	void foundLine(const ParameterType pt, const int v0, const int v1);
 	// f
 	void foundFace(const ParameterType pt, const std::vector<FaceInfo> &fidvec);
 	// mtl
@@ -59,6 +61,7 @@ private:
 	ObjMaterial *curMat;
 	MaterialRef curMatRef;
 	SceneObject *curObj;
+	std::vector<SceneObjectRef> tmpObjs;
 	Mesh *curMesh;
 	int curMatId;
 	AABB sceneAABB;

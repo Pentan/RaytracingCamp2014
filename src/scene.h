@@ -1,4 +1,4 @@
-#ifndef R1H_SCENE_H
+﻿#ifndef R1H_SCENE_H
 #define R1H_SCENE_H
 
 #include <vector>

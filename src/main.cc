@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <cstdio>
 #include <string>
 #include <thread>
@@ -13,6 +13,7 @@
 //
 #include "eduptscene.h"
 #include "scene2013.h"
+#include "scene2014.h"
 //
 
 #ifdef WIN32
@@ -35,6 +36,8 @@ static double gettimeofday_sec() {
 ///
 int main(int argc, char *argv[]) {
 
+	std::cout << "ray&bow- season 1" << std::endl;
+
     using namespace r1h;
 
     double startTime = gettimeofday_sec();
@@ -43,12 +46,13 @@ int main(int argc, char *argv[]) {
     Renderer *render = new Renderer();
     Renderer::Config renderConf = render->getConfig();
 	
-    renderConf.width = 1280 / 4;
-    renderConf.height = 720 / 4;
-	renderConf.samples = 16;
+    renderConf.width = 1280 / 1;
+    renderConf.height = 720 / 1;
+	renderConf.samplesWidth = 8;
+	renderConf.samplesDepth = 4;
 	renderConf.subSamples = 2;
-	renderConf.tileSize = 32;
-    renderConf.maxDepth = 16;
+	renderConf.tileSize = 64;
+    renderConf.maxDepth = 12;
 	
 	// parse render config from arguments?
 	
@@ -66,10 +70,10 @@ int main(int argc, char *argv[]) {
 	if(argc > 1) {
 		loaded = scene->loadWavefrontObj(argv[1]);
 	} else {
+		
+#if 0
 		printf("usage:%s [file.obj]\n", argv[0]);
 		printf("no obj set. setup default scene.\n");
-#if 0
-		//+++++
 		//loaded = scene->loadWavefrontObj("models/cube.obj");
 		//loaded = scene->loadWavefrontObj("models/monky_flat.obj");
 		//loaded = scene->loadWavefrontObj("models/monky_smooth.obj");
@@ -77,22 +81,25 @@ int main(int argc, char *argv[]) {
 		//loaded = scene->loadWavefrontObj("models/3cubes.obj");
 		//loaded = scene->loadWavefrontObj("models/2013/mainscene.obj");
 		//loaded = scene->loadWavefrontObj("models/manyobjs.obj");
-		//loaded = false;
-#else
-		// On code scene
+		//loaded = scene->loadWavefrontObj("extra/bleriot.obj");
+		//loaded = scene->loadWavefrontObj("extra/fantasy.obj");
+		
 		//loaded = scene->load();
 		loaded = true;
 		
 		//setupTestCubeScene(*scene); //+++++
 		
 		//+++++ edupt cornel box scene +++++
-		EduptScene::load(scene, (double)renderConf.width / renderConf.height);
-		//EduptScene::load2(scene, (double)renderConf.width / renderConf.height);
+		//EduptScene::load(scene, (double)renderConf.width / renderConf.height);
+		EduptScene::load2(scene, (double)renderConf.width / renderConf.height);
 		//+++++
 		//+++++ Render Camp 2013 scene +++++
 		//setupMainScene2013(*scene);
 		//+++++
 #endif
+		
+		///// 2014
+		loaded = setupMainScene2014(renderConf.width, renderConf.height, scene);
 	}
 	
     printf("scene loaded [%.4f sec]\n", gettimeofday_sec() - startTime);
@@ -121,7 +128,11 @@ int main(int argc, char *argv[]) {
 			if(curtime - prevouttime > kProgressOutIntervalSec) {
 				// progress output
 				char buf[16];
+#ifdef WIN32
+				sprintf_s(buf, "%03d.bmp", outcount);
+#else
 				sprintf(buf, "%03d.bmp", outcount);
+#endif
 				mapper->exportBMP(render->getFrameBuffer(), buf);
                 printf("progress image %s saved\n", buf);
 				outcount++;

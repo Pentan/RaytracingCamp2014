@@ -1,4 +1,4 @@
-#ifndef R1H_BSDFSPECULAR_H
+﻿#ifndef R1H_BSDFSPECULAR_H
 #define R1H_BSDFSPECULAR_H
 
 #include "bsdf.h"

@@ -1,4 +1,4 @@
-#ifndef R1H_RENDERER_H
+﻿#ifndef R1H_RENDERER_H
 #define R1H_RENDERER_H
 
 #include <thread>
@@ -21,7 +21,8 @@ public:
         int width;
         int height;
         int subSamples;
-        int samples;
+		int samplesWidth;
+		int samplesDepth;
         int minDepth;
         int maxDepth;
         int defaultThreads;
@@ -31,7 +32,8 @@ public:
 		width(640),
 		height(360),
 		subSamples(2),
-		samples(4),
+		samplesWidth(2),
+		samplesDepth(2),
         minDepth(3),
 		maxDepth(32),
 		defaultThreads(4),

@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <chrono>
 #include <random>
 
@@ -36,27 +36,28 @@ Renderer::~Renderer() {
 }
     
 void Renderer::render(Scene *scene, bool isdetach) {
-    // framebuffer
-    frameBuffer = new FrameBuffer(config.width, config.height);
-    int w = frameBuffer->getWidth();
-    int h = frameBuffer->getHeight();
-    
+	// framebuffer
+	frameBuffer = new FrameBuffer(config.width, config.height);
+	int w = frameBuffer->getWidth();
+	int h = frameBuffer->getHeight();
+
 	// scene
 	scene->prepareRendering();
-	
-    // queue
-    renderQueue = new RenderCommandQueue();
-	
-    // push tile command
+
+	// queue
+	renderQueue = new RenderCommandQueue();
+
+	// push tile command
 	pushedCommandCount = 0;
-    for(int iy = 0; iy < h; iy += config.tileSize) {
-        for(int ix = 0; ix < w; ix += config.tileSize) {
-            FrameBuffer::Tile tile = frameBuffer->makeTile(ix, iy, config.tileSize, config.tileSize);
-            renderQueue->pushTileCommand(tile);
-			++pushedCommandCount;
-        }
-    }
-    
+	for (int iw = 0; iw < config.samplesWidth; iw++) {
+		for (int iy = 0; iy < h; iy += config.tileSize) {
+			for (int ix = 0; ix < w; ix += config.tileSize) {
+				FrameBuffer::Tile tile = frameBuffer->makeTile(ix, iy, config.tileSize, config.tileSize);
+				renderQueue->pushTileCommand(tile);
+				++pushedCommandCount;
+			}
+		}
+	}
 	
     // detect workers
     int numthreads = std::thread::hardware_concurrency();
@@ -172,7 +173,7 @@ void Renderer::renderTile(Context *cntx, Scene *scene, FrameBuffer::Tile tile) {
                     R1hFPType cx = px * divw * 2.0 - 1.0;
                     R1hFPType cy = py * divh * 2.0 - 1.0;
                     
-                    for(int smpl = 0; smpl < config.samples; smpl++) {
+                    for(int smpl = 0; smpl < config.samplesDepth; smpl++) {
                         Ray ray = camera->getRay(cx, cy, &cntx->random);
                         Color c = scene->radiance(cntx, ray);
                         frameBuffer->accumulate(ix, iy, c);

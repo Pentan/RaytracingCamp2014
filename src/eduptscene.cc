@@ -1,4 +1,4 @@
-
+﻿
 #include "eduptscene.h"
 #include "sphere.h"
 #include "sceneobject.h"

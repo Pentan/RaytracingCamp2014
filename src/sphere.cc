@@ -1,4 +1,4 @@
-
+﻿
 #include "sphere.h"
 
 using namespace r1h;

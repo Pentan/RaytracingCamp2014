@@ -1,4 +1,4 @@
-
+﻿
 #include "bsdfrefraction.h"
 
 using namespace r1h;

@@ -1,13 +1,13 @@
-﻿#ifndef R1H_BSDFDIFFUSE_H
-#define R1H_BSDFDIFFUSE_H
+#ifndef R1H_BSDFTRANSLUCENT_H
+#define R1H_BSDFTRANSLUCENT_H
 
 #include "bsdf.h"
 
 namespace r1h {
 
-class DiffuseBSDF : public BSDF {
+class TranslucentBSDF : public BSDF {
 public:
-    ~DiffuseBSDF();
+    ~TranslucentBSDF();
     void makeNextRays(const Ray &ray, const Intersection &hp, const int depth, Random *rnd, std::vector<Ray> *outvecs);
 };
 

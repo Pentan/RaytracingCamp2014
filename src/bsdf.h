@@ -1,4 +1,4 @@
-#ifndef R1H_BSDF_H
+﻿#ifndef R1H_BSDF_H
 #define R1H_BSDF_H
 
 #include <vector>

@@ -1,4 +1,4 @@
-#ifndef R1H_OBJLOADER_H
+﻿#ifndef R1H_OBJLOADER_H
 #define R1H_OBJLOADER_H
 
 #include <string>
@@ -21,6 +21,7 @@ public:
         OBJ_g,       //= 'g',		// group
         OBJ_s,       //= 's',		// smooth shading
         OBJ_f,       //= 'f',		// face
+		OBJ_l,       //= 'l',		// line
         OBJ_mtllib,  //= 'mlib',	// outside materials
         OBJ_usemtl,  //= 'usem',	// use material
         // matl
@@ -39,7 +40,8 @@ public:
         kNoneValue,
         kVectorValue,
         kStringValue,
-        kFaceValue,
+		kFaceValue,
+		kLineValue,
         kIntegerValue
     };
     
@@ -73,7 +75,9 @@ public:
     // mtllib, o, s, usemtl, newmtl, MTL_map_Kd
     virtual void foundString(const ParameterType pt, const std::string &str) = 0;
     // illum
-    virtual void foundInteger(const ParameterType pt, const int i) = 0;
+	virtual void foundInteger(const ParameterType pt, const int i) = 0;
+	// l
+	virtual void foundLine(const ParameterType pt, const int v0, const int v1) = 0;
     // f
     virtual void foundFace(const ParameterType pt, const std::vector<FaceInfo> &fids) = 0;
     

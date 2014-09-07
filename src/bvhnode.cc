@@ -1,4 +1,4 @@
-
+﻿
 #include "bvhnode.h"
 
 using namespace r1h;

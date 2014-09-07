@@ -1,4 +1,4 @@
-#ifndef R1H_RANDOM_H
+﻿#ifndef R1H_RANDOM_H
 #define R1H_RANDOM_H
 
 #include <climits>

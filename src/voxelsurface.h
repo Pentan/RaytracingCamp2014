@@ -1,4 +1,4 @@
-#ifndef R1H_VOXELSURFACE_H
+﻿#ifndef R1H_VOXELSURFACE_H
 #define R1H_VOXELSURFACE_H
 
 #include <vector>
@@ -47,18 +47,18 @@ public:
 class VoxelGrid {
 public:
     struct {
-        R1hFPType x, y, z, xy;
-        R1hFPType cellx, celly, cellz, cellxy;
+        int x, y, z, xy;
+        int cellx, celly, cellz, cellxy;
     } size;
     
     std::vector<Voxel> voxels;
     std::vector<VoxelCell> cells;
     std::vector<VoxelEdge> edges;
     
-    int resolution;
+	R1hFPType unit;
     R1hFPType threshould;
     
-    VoxelGrid(R1hFPType sx, R1hFPType sy, R1hFPType sz, int reso);
+	VoxelGrid(int sx, int sy, int sz, R1hFPType uni);
     
     Voxel* voxelAt(int x, int y, int z); //+++++
     int getVoxelIndex(int x, int y, int z);

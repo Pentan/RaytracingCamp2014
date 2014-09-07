@@ -1,4 +1,4 @@
-#ifndef R1H_SCENE2013_H
+﻿#ifndef R1H_SCENE2013_H
 #define R1H_SCENE2013_H
 
 namespace r1h {

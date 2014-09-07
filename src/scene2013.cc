@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <cstdio>
 #include <map>
 
@@ -248,6 +248,12 @@ public:
         //case MTL_illum:
         // noop
     }
+
+	// l
+	void foundLine(const ParameterType pt, const int v0, const int v1) {
+		// noop
+	}
+
     // f
     void foundFace(const ParameterType pt, const std::vector<FaceInfo> &fids) {
         

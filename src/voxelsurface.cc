@@ -1,4 +1,4 @@
-#include "voxelsurface.h"
+﻿#include "voxelsurface.h"
 
 using namespace r1h;
 
@@ -72,7 +72,7 @@ Vector3 VoxelCell::calcSurfacePoint(R1hFPType thre) {
     
     int c = 0;
     Vector3 ep;
-    for(int i = 0; i < edgesnum; i++) {
+    for(size_t i = 0; i < edgesnum; i++) {
         VoxelEdge *tmpe = edges[i];
         if(tmpe->checkIntersect(thre) != 0) {
             ip += tmpe->intersect.p;
@@ -87,8 +87,8 @@ Vector3 VoxelCell::calcSurfacePoint(R1hFPType thre) {
 }
 
 /// VoxelGrid
-VoxelGrid::VoxelGrid(R1hFPType sx, R1hFPType sy, R1hFPType sz, int reso) {
-    resolution = reso;
+VoxelGrid::VoxelGrid(int sx, int sy, int sz, R1hFPType uni) {
+    unit = uni;
     
     size.x = sx;
     size.y = sy;
@@ -105,7 +105,7 @@ VoxelGrid::VoxelGrid(R1hFPType sx, R1hFPType sy, R1hFPType sz, int reso) {
         for(int iy = 0; iy < sy; iy++) {
             for(int ix = 0; ix < sx; ix++) {
                 int i = getVoxelIndex(ix, iy, iz);
-                voxels[i].init(ix * resolution, iy * resolution, iz * resolution, 0.0);
+                voxels[i].init(ix * unit, iy * unit, iz * unit, 0.0);
             }
         }
     }
